@@ -81,15 +81,38 @@ self.addEventListener("fetch", (event) => {
 function cacheOnDemand(request) {
   return caches.match(request).then((cached) => {
     if (cached) {
+      // Return cached version immediately
       return cached;
     }
+    // Try to fetch, but if offline, return empty response
     return fetch(request)
       .then((response) => {
-        const clone = response.clone();
-        caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, clone));
+        // Only cache successful responses
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(RUNTIME_CACHE).then((cache) => {
+            cache.put(request, clone).catch((err) => {
+              console.warn("Failed to cache:", request.url, err);
+            });
+          });
+        }
         return response;
       })
-      .catch(() => new Response("", { status: 503, statusText: "Offline" }));
+      .catch((error) => {
+        // If fetch fails (offline), try cache one more time
+        return caches.match(request).then((cached) => {
+          if (cached) {
+            return cached;
+          }
+          // Return error response
+          console.warn("Audio not cached and offline:", request.url);
+          return new Response("", { 
+            status: 503, 
+            statusText: "Offline",
+            headers: { "Content-Type": "audio/ogg" }
+          });
+        });
+      });
   });
 }
 

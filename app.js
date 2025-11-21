@@ -554,17 +554,96 @@ async function playSubmissionQueue() {
 function playSound(soundId) {
   if (!soundId) return wait(0);
   const source = getAudioSrc(soundId);
+  const fullUrl = new URL(source, window.location.href).href;
+  
   return new Promise((resolve) => {
-    const audio = new Audio(source);
+    let resolved = false;
+    const audio = new Audio();
     audio.preload = "auto";
+    
     const cleanup = () => {
-      audio.removeEventListener("ended", cleanup);
-      audio.removeEventListener("error", cleanup);
+      if (resolved) return;
+      resolved = true;
+      audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("error", onError);
+      audio.removeEventListener("canplaythrough", onCanPlay);
+      audio.removeEventListener("loadeddata", onCanPlay);
+      audio.removeEventListener("canplay", onCanPlay);
+      // Clean up audio element
+      audio.pause();
+      audio.src = "";
+      audio.load();
       resolve();
     };
-    audio.addEventListener("ended", cleanup);
-    audio.addEventListener("error", cleanup);
-    audio.play().catch(cleanup);
+    
+    const onEnded = () => {
+      cleanup();
+    };
+    
+    const onError = (e) => {
+      console.error("Audio error:", e, "for", source, "URL:", fullUrl);
+      cleanup();
+    };
+    
+    const onCanPlay = () => {
+      // Audio is ready, try to play
+      if (resolved) return;
+      
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Playback started successfully, wait for it to end
+          })
+          .catch((error) => {
+            console.warn("Audio play failed:", error, "for", source);
+            // Don't cleanup on play failure, let it try to load more
+            // Some mobile browsers need user interaction first
+          });
+      }
+    };
+    
+    // Add event listeners before setting source
+    audio.addEventListener("ended", onEnded);
+    audio.addEventListener("error", onError);
+    audio.addEventListener("canplaythrough", onCanPlay, { once: true });
+    audio.addEventListener("loadeddata", onCanPlay, { once: true });
+    audio.addEventListener("canplay", onCanPlay, { once: true });
+    
+    // Set source and load
+    audio.src = fullUrl;
+    audio.load();
+    
+    // Fallback timeout in case events don't fire or audio is already ready
+    const timeoutId = setTimeout(() => {
+      if (resolved) return;
+      
+      if (audio.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              // Success
+            })
+            .catch((error) => {
+              console.warn("Audio play failed (timeout fallback):", error, "for", source);
+              // Still resolve to not block, but log the error
+            });
+        }
+      } else {
+        // Audio didn't load in time
+        console.warn("Audio didn't load in time:", source, "readyState:", audio.readyState);
+        // Try to play anyway - might work
+        audio.play().catch(() => {
+          // Ignore play errors in timeout
+        });
+      }
+    }, 3000);
+    
+    // Clear timeout when audio ends
+    audio.addEventListener("ended", () => {
+      clearTimeout(timeoutId);
+    }, { once: true });
   });
 }
 
@@ -652,7 +731,7 @@ async function preloadAllAudio() {
     const cache = await caches.open('earwax-runtime-v2');
     
     // Process in batches to avoid overwhelming the browser
-    const BATCH_SIZE = 5;
+    const BATCH_SIZE = 3; // Smaller batches for mobile
     
     for (let i = 0; i < state.audioLibrary.length; i += BATCH_SIZE) {
       const batch = state.audioLibrary.slice(i, i + BATCH_SIZE);
@@ -661,14 +740,22 @@ async function preloadAllAudio() {
       await Promise.all(
         batch.map(async (audio) => {
           const audioUrl = getAudioSrc(audio.id);
+          const fullUrl = new URL(audioUrl, window.location.href).href;
+          
           try {
             // Check if already cached
-            const cached = await cache.match(audioUrl);
+            const cached = await cache.match(fullUrl);
             if (!cached) {
               // Fetch and cache - service worker will also intercept this
-              const response = await fetch(audioUrl);
+              const response = await fetch(fullUrl, { 
+                cache: 'no-cache' // Force network fetch, service worker will cache
+              });
               if (response.ok) {
-                await cache.put(audioUrl, response.clone());
+                // Clone response before caching
+                const responseClone = response.clone();
+                await cache.put(fullUrl, responseClone);
+              } else {
+                console.warn(`Failed to fetch audio ${audio.id}:`, response.status);
               }
             }
           } catch (error) {
@@ -681,15 +768,19 @@ async function preloadAllAudio() {
       state.loadingProgress = Math.min(i + BATCH_SIZE, state.audioLibrary.length);
       render();
       
-      // Small delay between batches to keep UI responsive
+      // Small delay between batches to keep UI responsive and avoid blocking
       if (i + BATCH_SIZE < state.audioLibrary.length) {
-        await wait(50);
+        await wait(100); // Longer delay for mobile
       }
     }
     
     // Ensure we show 100%
     state.loadingProgress = state.audioLibrary.length;
     render();
+    
+    // Verify cache
+    const cacheSize = await cache.keys();
+    console.log(`Preloaded ${cacheSize.length} audio files into cache`);
   } catch (error) {
     console.error('Error preloading audio:', error);
     // Still mark as complete even if there were errors
