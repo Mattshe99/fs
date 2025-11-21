@@ -1,0 +1,206 @@
+:root {
+  color-scheme: dark;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #1e293b 0, #0f172a 60%);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header,
+.app-footer {
+  padding: 0.75rem 1.25rem;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.app-footer {
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  border-bottom: none;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-align: center;
+  margin-top: auto;
+}
+
+.app-shell {
+  flex: 1;
+  padding: 1.25rem;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+button {
+  font: inherit;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.25rem;
+  background: #fbbf24;
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.panel {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 24px;
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.6);
+}
+
+.panel h2 {
+  margin-top: 0;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+input[type="text"] {
+  flex: 1;
+  min-width: 180px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 0.85rem 1.1rem;
+  background: rgba(15, 23, 42, 0.5);
+  color: inherit;
+}
+
+.player-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  margin: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.player-chip button {
+  padding: 0.25rem 0.6rem;
+  background: transparent;
+  color: #f87171;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.outline-button {
+  background: transparent;
+  border: 1px solid rgba(248, 250, 252, 0.4);
+  color: inherit;
+}
+
+.outline-button.selected {
+  background: rgba(248, 191, 36, 0.2);
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+
+.scoreboard {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.score-pill {
+  padding: 0.4rem 0.9rem;
+  border-radius: 18px;
+  background: rgba(248, 191, 36, 0.15);
+  border: 1px solid rgba(248, 191, 36, 0.4);
+  font-weight: 600;
+}
+
+.judge-pill {
+  display: inline-flex;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px dashed rgba(248, 191, 36, 0.6);
+  color: #fbbf24;
+  margin-bottom: 0.5rem;
+}
+
+.prompt-card {
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(248, 250, 252, 0.08);
+  margin-bottom: 1rem;
+}
+
+.help-text {
+  color: #cbd5f5;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chips span {
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.25);
+  font-size: 0.85rem;
+}
+
+.connection-pill {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.connection-pill.online {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.connection-pill.offline {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+
+
