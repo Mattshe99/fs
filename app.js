@@ -537,13 +537,36 @@ async function playSubmissionQueue() {
     await wait(500);
   }
   
-  for (const entry of state.playbackQueue) {
+  for (let i = 0; i < state.playbackQueue.length; i++) {
+    const entry = state.playbackQueue[i];
     state.currentlyRevealedSounds = entry.sounds.map((sound) => sound.name);
     render();
-    await playSound(entry.sounds[0]?.id);
-    await wait(SOUND_GAP_MS);
-    await playSound(entry.sounds[1]?.id);
-    await wait(PLAYER_GAP_MS);
+    
+    try {
+      // Play first sound
+      if (entry.sounds[0]?.id) {
+        await playSound(entry.sounds[0]?.id).catch((error) => {
+          console.warn(`Failed to play first sound for player ${entry.player}:`, error);
+        });
+      }
+      await wait(SOUND_GAP_MS);
+      
+      // Play second sound
+      if (entry.sounds[1]?.id) {
+        await playSound(entry.sounds[1]?.id).catch((error) => {
+          console.warn(`Failed to play second sound for player ${entry.player}:`, error);
+        });
+      }
+      
+      // Wait before next player (unless it's the last one)
+      if (i < state.playbackQueue.length - 1) {
+        await wait(PLAYER_GAP_MS);
+      }
+    } catch (error) {
+      console.error(`Error playing submission for ${entry.player}:`, error);
+      // Continue to next player even if this one failed
+      await wait(PLAYER_GAP_MS);
+    }
   }
   state.isPlaying = false;
   state.currentlyRevealedSounds = null;
@@ -578,6 +601,8 @@ async function playSound(soundId) {
   return new Promise((resolve) => {
     let resolved = false;
     let blobUrl = null;
+    let timeoutId = null;
+    let maxTimeoutId = null;
     
     const audio = new Audio();
     audio.preload = "auto";
@@ -585,6 +610,11 @@ async function playSound(soundId) {
     const cleanup = () => {
       if (resolved) return;
       resolved = true;
+      
+      // Clear all timeouts
+      if (timeoutId) clearTimeout(timeoutId);
+      if (maxTimeoutId) clearTimeout(maxTimeoutId);
+      
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("error", onError);
       audio.removeEventListener("canplaythrough", onCanPlay);
@@ -607,25 +637,46 @@ async function playSound(soundId) {
     
     const onError = (e) => {
       console.error("Audio error:", e, "for", source, "URL:", audioUrl, "Online:", navigator.onLine);
-      cleanup();
+      // Resolve after a short delay to allow error to be logged
+      setTimeout(cleanup, 100);
     };
     
-    const onCanPlay = () => {
-      // Audio is ready, try to play
-      if (resolved) return;
+    let playAttempted = false;
+    const attemptPlay = () => {
+      if (resolved || playAttempted) return;
+      playAttempted = true;
       
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             // Playback started successfully, wait for it to end
+            console.log("Audio playing:", source);
           })
           .catch((error) => {
             console.warn("Audio play failed:", error, "for", source);
-            // Don't cleanup on play failure, let it try to load more
-            // Some mobile browsers need user interaction first
+            // If play fails, wait a bit then resolve anyway to not block
+            setTimeout(() => {
+              if (!resolved) {
+                console.warn("Resolving after play failure to prevent blocking");
+                cleanup();
+              }
+            }, 500);
           });
+      } else {
+        // No promise returned, assume it's playing or will play
+        setTimeout(() => {
+          if (!resolved && audio.ended) {
+            cleanup();
+          }
+        }, 100);
       }
+    };
+    
+    const onCanPlay = () => {
+      // Audio is ready, try to play
+      if (resolved) return;
+      attemptPlay();
     };
     
     // Add event listeners before setting source
@@ -641,35 +692,26 @@ async function playSound(soundId) {
     audio.load();
     
     // Fallback timeout in case events don't fire or audio is already ready
-    const timeoutId = setTimeout(() => {
+    timeoutId = setTimeout(() => {
       if (resolved) return;
       
       if (audio.readyState >= 2) { // HAVE_CURRENT_DATA or higher
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              // Success
-            })
-            .catch((error) => {
-              console.warn("Audio play failed (timeout fallback):", error, "for", source);
-              // Still resolve to not block, but log the error
-            });
-        }
+        attemptPlay();
       } else {
         // Audio didn't load in time
         console.warn("Audio didn't load in time:", source, "readyState:", audio.readyState, "Online:", navigator.onLine);
         // Try to play anyway - might work
-        audio.play().catch(() => {
-          // Ignore play errors in timeout
-        });
+        attemptPlay();
       }
-    }, 3000);
+    }, 2000);
     
-    // Clear timeout when audio ends
-    audio.addEventListener("ended", () => {
-      clearTimeout(timeoutId);
-    }, { once: true });
+    // Maximum timeout - force resolve after 10 seconds to prevent infinite hanging
+    maxTimeoutId = setTimeout(() => {
+      if (!resolved) {
+        console.warn("Audio timeout - forcing resolve for:", source);
+        cleanup();
+      }
+    }, 10000);
   });
 }
 
