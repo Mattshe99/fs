@@ -29,6 +29,8 @@ const state = {
   lastWinner: null,
   winner: null,
   errorMessage: "",
+  loadingProgress: 0,
+  totalAudioFiles: 0,
 };
 
 const appRoot = document.getElementById("app");
@@ -51,6 +53,13 @@ async function init() {
     state.audioById = new Map(state.audioLibrary.map((item) => [item.id, item]));
     state.promptLibrary = await promptRes.json();
     rebuildPromptBag();
+    
+    // Preload all audio files
+    state.totalAudioFiles = state.audioLibrary.length;
+    state.loadingProgress = 0;
+    render(); // Show loading screen with progress
+    await preloadAllAudio();
+    
     state.stage = "lobby";
   } catch (error) {
     console.error(error);
@@ -107,10 +116,24 @@ function render() {
 }
 
 function renderLoading() {
+  const progress = state.totalAudioFiles > 0 
+    ? Math.round((state.loadingProgress / state.totalAudioFiles) * 100) 
+    : 0;
+  const loaded = state.loadingProgress;
+  const total = state.totalAudioFiles;
+  
   return `
     <section class="panel">
-      <h2>Loading assets…</h2>
-      <p>Please wait.</p>
+      <h2>Loading audio files…</h2>
+      <p>Caching ${total} sounds for offline play</p>
+      <div style="margin: 20px 0;">
+        <div style="background: #374151; border-radius: 8px; height: 24px; overflow: hidden; position: relative;">
+          <div style="background: #3b82f6; height: 100%; width: ${progress}%; transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
+            ${progress}%
+          </div>
+        </div>
+      </div>
+      <p style="font-size: 14px; color: #9ca3af;">${loaded} / ${total} files loaded</p>
     </section>
   `;
 }
@@ -617,6 +640,62 @@ function formatPrompt(promptName, replacementName, fallback = "___") {
 
 function getAudioSrc(id) {
   return `Audio/${id}.ogg`;
+}
+
+async function preloadAllAudio() {
+  if (!state.audioLibrary || state.audioLibrary.length === 0) {
+    return;
+  }
+
+  // Use cache API to preload all audio files
+  try {
+    const cache = await caches.open('earwax-runtime-v2');
+    
+    // Process in batches to avoid overwhelming the browser
+    const BATCH_SIZE = 5;
+    
+    for (let i = 0; i < state.audioLibrary.length; i += BATCH_SIZE) {
+      const batch = state.audioLibrary.slice(i, i + BATCH_SIZE);
+      
+      // Process batch in parallel
+      await Promise.all(
+        batch.map(async (audio) => {
+          const audioUrl = getAudioSrc(audio.id);
+          try {
+            // Check if already cached
+            const cached = await cache.match(audioUrl);
+            if (!cached) {
+              // Fetch and cache - service worker will also intercept this
+              const response = await fetch(audioUrl);
+              if (response.ok) {
+                await cache.put(audioUrl, response.clone());
+              }
+            }
+          } catch (error) {
+            console.warn(`Failed to preload audio ${audio.id}:`, error);
+          }
+        })
+      );
+      
+      // Update progress after each batch
+      state.loadingProgress = Math.min(i + BATCH_SIZE, state.audioLibrary.length);
+      render();
+      
+      // Small delay between batches to keep UI responsive
+      if (i + BATCH_SIZE < state.audioLibrary.length) {
+        await wait(50);
+      }
+    }
+    
+    // Ensure we show 100%
+    state.loadingProgress = state.audioLibrary.length;
+    render();
+  } catch (error) {
+    console.error('Error preloading audio:', error);
+    // Still mark as complete even if there were errors
+    state.loadingProgress = state.audioLibrary.length;
+    render();
+  }
 }
 
 function pickPromptTarget() {
