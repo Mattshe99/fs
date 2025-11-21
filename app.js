@@ -551,13 +551,34 @@ async function playSubmissionQueue() {
   render();
 }
 
-function playSound(soundId) {
+async function playSound(soundId) {
   if (!soundId) return wait(0);
   const source = getAudioSrc(soundId);
   const fullUrl = new URL(source, window.location.href).href;
   
+  // Check if we're offline and need to use cached audio
+  // iOS Safari requires blob URLs for cached audio to work offline
+  let audioUrl = fullUrl;
+  
+  if (!navigator.onLine && 'caches' in window) {
+    try {
+      const cache = await caches.open('earwax-runtime-v2');
+      const cachedResponse = await cache.match(fullUrl);
+      
+      if (cachedResponse) {
+        // Convert cached response to blob URL for iOS compatibility
+        const blob = await cachedResponse.blob();
+        audioUrl = URL.createObjectURL(blob);
+      }
+    } catch (error) {
+      console.warn("Failed to get cached audio, using direct URL:", error);
+    }
+  }
+  
   return new Promise((resolve) => {
     let resolved = false;
+    let blobUrl = null;
+    
     const audio = new Audio();
     audio.preload = "auto";
     
@@ -573,6 +594,10 @@ function playSound(soundId) {
       audio.pause();
       audio.src = "";
       audio.load();
+      // Clean up blob URL if we created one
+      if (blobUrl && blobUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(blobUrl);
+      }
       resolve();
     };
     
@@ -581,7 +606,7 @@ function playSound(soundId) {
     };
     
     const onError = (e) => {
-      console.error("Audio error:", e, "for", source, "URL:", fullUrl);
+      console.error("Audio error:", e, "for", source, "URL:", audioUrl, "Online:", navigator.onLine);
       cleanup();
     };
     
@@ -611,7 +636,8 @@ function playSound(soundId) {
     audio.addEventListener("canplay", onCanPlay, { once: true });
     
     // Set source and load
-    audio.src = fullUrl;
+    blobUrl = audioUrl;
+    audio.src = audioUrl;
     audio.load();
     
     // Fallback timeout in case events don't fire or audio is already ready
@@ -632,7 +658,7 @@ function playSound(soundId) {
         }
       } else {
         // Audio didn't load in time
-        console.warn("Audio didn't load in time:", source, "readyState:", audio.readyState);
+        console.warn("Audio didn't load in time:", source, "readyState:", audio.readyState, "Online:", navigator.onLine);
         // Try to play anyway - might work
         audio.play().catch(() => {
           // Ignore play errors in timeout
@@ -781,6 +807,19 @@ async function preloadAllAudio() {
     // Verify cache
     const cacheSize = await cache.keys();
     console.log(`Preloaded ${cacheSize.length} audio files into cache`);
+    
+    // Test a few cached files to ensure they're accessible
+    if (cacheSize.length > 0) {
+      const testFiles = cacheSize.slice(0, 3);
+      for (const request of testFiles) {
+        const cached = await cache.match(request);
+        if (cached) {
+          console.log(`✓ Verified cached: ${request.url}`);
+        } else {
+          console.warn(`✗ Failed to verify: ${request.url}`);
+        }
+      }
+    }
   } catch (error) {
     console.error('Error preloading audio:', error);
     // Still mark as complete even if there were errors
@@ -825,11 +864,25 @@ function speakText(text) {
 
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) {
+    console.warn("Service workers not supported");
     return;
   }
   window.addEventListener("load", async () => {
     try {
-      await navigator.serviceWorker.register("./earwax-sw.js");
+      const registration = await navigator.serviceWorker.register("./earwax-sw.js");
+      console.log("Service worker registered:", registration.scope);
+      
+      // Check if service worker is active
+      if (registration.active) {
+        console.log("Service worker is active");
+      } else if (registration.installing) {
+        console.log("Service worker is installing");
+        registration.installing.addEventListener("statechange", (e) => {
+          console.log("Service worker state:", e.target.state);
+        });
+      } else if (registration.waiting) {
+        console.log("Service worker is waiting");
+      }
     } catch (error) {
       console.warn("Service worker registration failed", error);
     }
