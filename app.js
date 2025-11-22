@@ -649,7 +649,7 @@ async function playSound(soundId) {
   
   if ('caches' in window) {
     try {
-      const cache = await caches.open('earwax-runtime-v3');
+      const cache = await caches.open('earwax-runtime-v2');
       const cachedResponse = await cache.match(fullUrl);
       
       if (cachedResponse) {
@@ -959,7 +959,7 @@ async function preloadAllAudio() {
 
   // Use cache API to preload all audio files
   try {
-    const cache = await caches.open('earwax-runtime-v3');
+    const cache = await caches.open('earwax-runtime-v2');
     
     // Process in batches to avoid overwhelming the browser
     const BATCH_SIZE = 3; // Smaller batches for mobile

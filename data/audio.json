@@ -1,974 +1,1145 @@
-[
-  {
-    "id": 25745,
-    "name": "wut da heeeeeeeeel",
-    "short": "wut da heeeeeeeeel",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25746,
-    "name": "my life be like",
-    "short": "my life be like",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25748,
-    "name": "omg (black guy)",
-    "short": "omg (black guy)",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25749,
-    "name": "are you serious right now",
-    "short": "are you serious right now",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25750,
-    "name": "indian music (bass boosted)",
-    "short": "indian music (bass boosted)",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25751,
-    "name": "dramatic tiktok music",
-    "short": "dramatic tiktok music",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25752,
-    "name": "rizz music",
-    "short": "rizz music",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25753,
-    "name": "goofy ahh running",
-    "short": "goofy ahh running",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25755,
-    "name": "hold up tiktok",
-    "short": "hold up tiktok",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25756,
-    "name": "sad accordion (bass boosted)",
-    "short": "sad accordion (bass boosted",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25757,
-    "name": "vine boom",
-    "short": "vine boom",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25759,
-    "name": "happy happy happy",
-    "short": "happy happy happy",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25760,
-    "name": "i woke up in a new bugatti",
-    "short": "i woke up in a new bugatti",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25761,
-    "name": "bruh",
-    "short": "bruh",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25762,
-    "name": "fart with reverb",
-    "short": "fart with reverb",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25763,
-    "name": "ak-47",
-    "short": "ak-47",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25764,
-    "name": "among us reveal",
-    "short": "among us reveal",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25765,
-    "name": "mexican laugh",
-    "short": "mexican laugh",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25766,
-    "name": "nope",
-    "short": "nope",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25767,
-    "name": "oh hell noowahhah",
-    "short": "oh hell noowahhah",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25768,
-    "name": "oh no no no (build up)",
-    "short": "oh no no no (build up)",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25769,
-    "name": "pistol shooting",
-    "short": "pistol shooting",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25770,
-    "name": "scooby rehehehe",
-    "short": "scooby rehehehe",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25771,
-    "name": "skidda bop mm dada (explosion)",
-    "short": "skidda bop mm dada (explosion)",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25772,
-    "name": "tactical nuke incoming!",
-    "short": "tactical nuke incoming!",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25773,
-    "name": "yeet",
-    "short": "yeet",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25774,
-    "name": "goofy ahh laugh",
-    "short": "goofy ahh laugh",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25775,
-    "name": "let's goooo",
-    "short": "let's goooo",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25776,
-    "name": "legalise nuclear bombs",
-    "short": "legalise nuclear bombs",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25777,
-    "name": "goofy ahh yell",
-    "short": "goofy ahh yell",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25779,
-    "name": "goofy ahh snooring",
-    "short": "goofy ahh snooring",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25780,
-    "name": "goofy ahh walking",
-    "short": "goofy ahh walking",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25781,
-    "name": "machine gun",
-    "short": "machine gun",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25782,
-    "name": "outro music (build up)",
-    "short": "outro music (build up)",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25784,
-    "name": "meme laughing",
-    "short": "meme laughing",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25785,
-    "name": "social credit siren",
-    "short": "social credit siren",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25786,
-    "name": "hard slap",
-    "short": "hard slap",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25787,
-    "name": "comedic drum punchline",
-    "short": "comedic drum punchline",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25788,
-    "name": "sad spongebob sound",
-    "short": "sad spongebob sound",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25789,
-    "name": "we do not care (plus hype music)",
-    "short": "we do not care (plus hype music)",
-    "categories": [
-      "music"
-    ]
-  },
-  {
-    "id": 25790,
-    "name": "down in ohio",
-    "short": "down in ohio",
-    "categories": [
-      "music"
-    ]
-  },
-  {
-    "id": 25791,
-    "name": "hog riderrrrrr (10x volume)",
-    "short": "hog riderrrrr (10x volume)",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25795,
-    "name": "fbi open up",
-    "short": "fbi open up",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25796,
-    "name": "balls in yo jaws",
-    "short": "balls in yo jaws",
-    "categories": [
-      "music"
-    ]
-  },
-  {
-    "id": 25797,
-    "name": "gay (echo)",
-    "short": "gay (echo)",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25798,
-    "name": "sigma tiktok music",
-    "short": "sigma tiktok music",
-    "categories": [
-      "music"
-    ]
-  },
-  {
-    "id": 25799,
-    "name": "negawaaaatt",
-    "short": "negawaaaatt",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25800,
-    "name": "siuuuuuu",
-    "short": "siuuuuuu",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25804,
-    "name": "freddy fazbear deployed",
-    "short": "freddy fazbear deployed",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 25808,
-    "name": "crazy man screaming",
-    "short": "crazy man screaming",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25809,
-    "name": "i said let him cook (+ hype music)",
-    "short": "i said let him cook (+ hype music)",
-    "categories": [
-      "music"
-    ]
-  },
-  {
-    "id": 25810,
-    "name": "griddy song",
-    "short": "griddy song",
-    "categories": [
-      "music"
-    ]
-  },
-  {
-    "id": 25811,
-    "name": "auughhhh",
-    "short": "auughhhh",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25812,
-    "name": "chomp",
-    "short": "chomp",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 25813,
-    "name": "daddy's home song",
-    "short": "daddy's home song",
-    "categories": [
-      "music"
-    ]
-  },
-  {
-    "id": 25814,
-    "name": "danger siren",
-    "short": "danger siren",
-    "categories": [
-      "alarm"
-    ]
-  },
-  {
-    "id": 25815,
-    "name": "ain't no party like a diddy party",
-    "short": "ain't no party like a diddy party",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25816,
-    "name": "erm what the sigma?",
-    "short": "erm what the sigma?",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25817,
-    "name": "fein",
-    "short": "fein",
-    "categories": [
-      "music"
-    ]
-  },
-  {
-    "id": 25818,
-    "name": "i like my cheese drippy bruh",
-    "short": "i like my cheese drippy bruh",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25819,
-    "name": "indian mike",
-    "short": "indian mike",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25820,
-    "name": "knife stab",
-    "short": "knife stab",
-    "categories": [
-      "violence"
-    ]
-  },
-  {
-    "id": 25822,
-    "name": "alert meme sound",
-    "short": "alert meme sound",
-    "categories": [
-      "Cartoon"
-    ]
-  },
-  {
-    "id": 25823,
-    "name": "the bluetooth device is ready to pair",
-    "short": "the bluetooth device is ready to pair",
-    "categories": [
-      "Cartoon"
-    ]
-  },
-  {
-    "id": 25824,
-    "name": "from screen to the ring to the pen to the king",
-    "short": "from screen to the ring to the pen to the king",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25825,
-    "name": "ksi thick of it",
-    "short": "ksi thick of it",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25826,
-    "name": "get out!",
-    "short": "get out!",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25827,
-    "name": "wait wait wait what the heell",
-    "short": "wait wait wait what the heell",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 25828,
-    "name": "mike down the stairs",
-    "short": "mike down the stairs",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 25743,
-    "name": "fart (slow & steady)",
-    "short": "fart (slow & steady)",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 25744,
-    "name": "toilet troubles",
-    "short": "toilet troubles",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 24028,
-    "name": "“who wants hot dogs” (male)",
-    "short": "“who wants hot dogs”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 24030,
-    "name": "“you’re fired” (male)",
-    "short": "“you’re fired”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 23502,
-    "name": "“bring it on” (male)",
-    "short": "“bring it on”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25692,
-    "name": "crowd screaming",
-    "short": "crowd screaming",
-    "categories": [
-      "crowd"
-    ]
-  },
-  {
-    "id": 25693,
-    "name": "battle cry (male)",
-    "short": "battle cry",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 23014,
-    "name": "sexy whistle",
-    "short": "sexy whistle",
-    "categories": [
-      "cartoon"
-    ]
-  },
-  {
-    "id": 22990,
-    "name": "wet cheek flappy",
-    "short": "wet cheek flappy",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 22867,
-    "name": "scared scream (female)",
-    "short": "scared scream",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22824,
-    "name": "cell phone ringing",
-    "short": "cell phone ringing",
-    "categories": [
-      "household"
-    ]
-  },
-  {
-    "id": 22801,
-    "name": "monster scream",
-    "short": "monster scream",
-    "categories": [
-      "Animal"
-    ]
-  },
-  {
-    "id": 22779,
-    "name": "“5-4-3-2-1” countdown (male)",
-    "short": "“5-4-3-2-1” countdown",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22719,
-    "name": "“back by popular demand” (male)",
-    "short": "“back by popular demand”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22692,
-    "name": "“good girl” (female)",
-    "short": "“good girl”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22641,
-    "name": "fast heartbeat",
-    "short": "fast heartbeat",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 22600,
-    "name": "giggle (female)",
-    "short": "giggle",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22545,
-    "name": "large explosion",
-    "short": "large explosion",
-    "categories": [
-      "explosion"
-    ]
-  },
-  {
-    "id": 22498,
-    "name": "crowd saying “Surprise!”",
-    "short": "crowd saying “Surprise!”",
-    "categories": [
-      "crowd"
-    ]
-  },
-  {
-    "id": 22485,
-    "name": "crowd saying “5, 4, 3, 2...”",
-    "short": "crowd saying “5, 4, 3, 2...”",
-    "categories": [
-      "crowd"
-    ]
-  },
-  {
-    "id": 22388,
-    "name": "long cartoon kiss",
-    "short": "long cartoon kiss",
-    "categories": [
-      "cartoon",
-      "human"
-    ]
-  },
-  {
-    "id": 22390,
-    "name": "cartoon insane laughter",
-    "short": "cartoon insane laughter",
-    "categories": [
-      "cartoon",
-      "voice"
-    ]
-  },
-  {
-    "id": 24026,
-    "name": "“tada!” (male)",
-    "short": "“tada!”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 24027,
-    "name": "“this is delicious” (male)",
-    "short": "“this is delicious”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25690,
-    "name": "clearing throat (male)",
-    "short": "clearing throat",
-    "categories": [
-      "human"
-    ]
-  },
-  {
-    "id": 25687,
-    "name": "blowing horn badly",
-    "short": "blowing horn badly",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 23492,
-    "name": "guitar ending riff",
-    "short": "guitar ending riff",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 22992,
-    "name": "whip crack",
-    "short": "whip crack",
-    "categories": [
-      "violence"
-    ]
-  },
-  {
-    "id": 22969,
-    "name": "“ouch” (male)",
-    "short": "“ouch”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22866,
-    "name": "horror scream (female)",
-    "short": "horror scream",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22838,
-    "name": "puking into toilet",
-    "short": "puking into toilet",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 22834,
-    "name": "long police siren",
-    "short": "long police siren",
-    "categories": [
-      "alarm",
-      "vehicle"
-    ]
-  },
-  {
-    "id": 22785,
-    "name": "“hello” (male)",
-    "short": "“hello”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22777,
-    "name": "laughtrack",
-    "short": "laughtrack",
-    "categories": [
-      "crowd"
-    ]
-  },
-  {
-    "id": 22738,
-    "name": "“try again” (male)",
-    "short": "“try again”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22748,
-    "name": "“this may take a while” (male)",
-    "short": "“this may take a while”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22723,
-    "name": "“Hello, is anybody there?” (male)",
-    "short": "“Hello, is anybody there?”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22725,
-    "name": "“made in the USA” (male)",
-    "short": "“made in the USA”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22707,
-    "name": "“softer” (female)",
-    "short": "“softer”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22639,
-    "name": "harp gliss/dreaming",
-    "short": "harp gliss/dreaming",
-    "categories": [
-      "Music"
-    ]
-  },
-  {
-    "id": 22617,
-    "name": "evacuating bowels",
-    "short": "evacuating bowels",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 22574,
-    "name": "messy fart",
-    "short": "messy fart",
-    "categories": [
-      "bodily functions"
-    ]
-  },
-  {
-    "id": 22541,
-    "name": "electric chair",
-    "short": "electric chair",
-    "categories": [
-      "electronic/machine"
-    ]
-  },
-  {
-    "id": 22546,
-    "name": "big explosion with glass",
-    "short": "big explosion with glass",
-    "categories": [
-      "explosion"
-    ]
-  },
-  {
-    "id": 22455,
-    "name": "chimp freaking out",
-    "short": "chimp freaking out",
-    "categories": [
-      "Animal"
-    ]
-  },
-  {
-    "id": 22473,
-    "name": "car skid and crash",
-    "short": "car skid and crash",
-    "categories": [
-      "vehicle"
-    ]
-  },
-  {
-    "id": 22458,
-    "name": "person choking",
-    "short": "person choking",
-    "categories": [
-      "human"
-    ]
-  },
-  {
-    "id": 22442,
-    "name": "cartoon high-pitched gibberish",
-    "short": "cartoon high-pitched gibberish",
-    "categories": [
-      "cartoon",
-      "voice"
-    ]
-  },
-  {
-    "id": 22681,
-    "name": "heavy panting",
-    "short": "heavy panting",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25701,
-    "name": "“You’re not listening to me!” (female)",
-    "short": "“You’re not listening to me!”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 25711,
-    "name": "“What are you waiting for?!” (male)",
-    "short": "“What are you waiting for?!”",
-    "categories": [
-      "voice"
-    ]
-  },
-  {
-    "id": 22280,
-    "name": "banjo song ending",
-    "short": "banjo song ending",
-    "categories": [
-      "Music"
-    ]
-  }
-]
+{
+    "episodeid": 1234,
+    "content": [{
+        "x": false,
+        "name": "wut da heeeeeeeeel",
+        "short": "wut da heeeeeeeeel",
+        "id": 25745,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "my life be like",
+        "short": "my life be like",
+        "id": 25746,
+        "categories": ["voice"]
+    }, {
+        "x": true,
+        "name": "hub intro",
+        "short": "hub intro",
+        "id": 25747,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "omg (black guy)",
+        "short": "omg (black guy)",
+        "id": 25748,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "are you serious right now",
+        "short": "are you serious right now",
+        "id": 25749,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "indian music (bass boosted)",
+        "short": "indian music (bass boosted)",
+        "id": 25750,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "dramatic tiktok music",
+        "short": "dramatic tiktok music",
+        "id": 25751,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "rizz music",
+        "short": "rizz music",
+        "id": 25752,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "goofy ahh running",
+        "short": "goofy ahh running",
+        "id": 25753,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "hold up tiktok",
+        "short": "hold up tiktok",
+        "id": 25755,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "sad accordion (bass boosted)",
+        "short": "sad accordion (bass boosted",
+        "id": 25756,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "vine boom",
+        "short": "vine boom",
+        "id": 25757,
+        "categories": ["cartoon"]
+    }, {
+        "x": true,
+        "name": "really n****",
+        "short": "really n****",
+        "id": 25758,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "happy happy happy",
+        "short": "happy happy happy",
+        "id": 25759,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "i woke up in a new bugatti",
+        "short": "i woke up in a new bugatti",
+        "id": 25760,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "bruh",
+        "short": "bruh",
+        "id": 25761,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "fart with reverb",
+        "short": "fart with reverb",
+        "id": 25762,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "ak-47",
+        "short": "ak-47",
+        "id": 25763,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "among us reveal",
+        "short": "among us reveal",
+        "id": 25764,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "mexican laugh",
+        "short": "mexican laugh",
+        "id": 25765,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "nope",
+        "short": "nope",
+        "id": 25766,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "oh hell noowahhah",
+        "short": "oh hell noowahhah",
+        "id": 25767,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "oh no no no (build up)",
+        "short": "oh no no no (build up)",
+        "id": 25768,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "pistol shooting",
+        "short": "pistol shooting",
+        "id": 25769,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "scooby rehehehe",
+        "short": "scooby rehehehe",
+        "id": 25770,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "skidda bop mm dada (explosion)",
+        "short": "skidda bop mm dada (explosion)",
+        "id": 25771,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "tactical nuke incoming!",
+        "short": "tactical nuke incoming!",
+        "id": 25772,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "yeet",
+        "short": "yeet",
+        "id": 25773,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "goofy ahh laugh",
+        "short": "goofy ahh laugh",
+        "id": 25774,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "let's goooo",
+        "short": "let's goooo",
+        "id": 25775,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "legalise nuclear bombs",
+        "short": "legalise nuclear bombs",
+        "id": 25776,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "goofy ahh yell",
+        "short": "goofy ahh yell",
+        "id": 25777,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "goofy ahh snooring",
+        "short": "goofy ahh snooring",
+        "id": 25779,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "goofy ahh walking",
+        "short": "goofy ahh walking",
+        "id": 25780,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "machine gun",
+        "short": "machine gun",
+        "id": 25781,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "outro music (build up)",
+        "short": "outro music (build up)",
+        "id": 25782,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "meme laughing",
+        "short": "meme laughing",
+        "id": 25784,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "social credit siren",
+        "short": "social credit siren",
+        "id": 25785,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "hard slap",
+        "short": "hard slap",
+        "id": 25786,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "comedic drum punchline",
+        "short": "comedic drum punchline",
+        "id": 25787,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "sad spongebob sound",
+        "short": "sad spongebob sound",
+        "id": 25788,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "we do not care (plus hype music)",
+        "short": "we do not care (plus hype music)",
+        "id": 25789,
+        "categories": ["music"]
+    }, {
+        "x": false,
+        "name": "down in ohio",
+        "short": "down in ohio",
+        "id": 25790,
+        "categories": ["music"]
+    }, {
+        "x": false,
+        "name": "hog riderrrrrr (10x volume)",
+        "short": "hog riderrrrr (10x volume)",
+        "id": 25791,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "fbi open up",
+        "short": "fbi open up",
+        "id": 25795,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "balls in yo jaws",
+        "short": "balls in yo jaws",
+        "id": 25796,
+        "categories": ["music"]
+    }, {
+        "x": false,
+        "name": "gay (echo)",
+        "short": "gay (echo)",
+        "id": 25797,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "sigma tiktok music",
+        "short": "sigma tiktok music",
+        "id": 25798,
+        "categories": ["music"]
+    }, {
+        "x": false,
+        "name": "negawaaaatt",
+        "short": "negawaaaatt",
+        "id": 25799,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "siuuuuuu",
+        "short": "siuuuuuu",
+        "id": 25800,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "freddy fazbear deployed",
+        "short": "freddy fazbear deployed",
+        "id": 25804,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "crazy man screaming",
+        "short": "crazy man screaming",
+        "id": 25808,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "i said let him cook (+ hype music)",
+        "short": "i said let him cook (+ hype music)",
+        "id": 25809,
+        "categories": ["music"]
+    }, {
+        "x": false,
+        "name": "griddy song",
+        "short": "griddy song",
+        "id": 25810,
+        "categories": ["music"]
+    }, {
+        "x": false,
+        "name": "auughhhh",
+        "short": "auughhhh",
+        "id": 25811,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "chomp",
+        "short": "chomp",
+        "id": 25812,
+        "categories": ["bodily functions"]
+    }, {
+        "x": false,
+        "name": "daddy's home song",
+        "short": "daddy's home song",
+        "id": 25813,
+        "categories": ["music"]
+    }, {
+        "x": false,
+        "name": "danger siren",
+        "short": "danger siren",
+        "id": 25814,
+        "categories": ["alarm"]
+    }, {
+        "x": false,
+        "name": "ain't no party like a diddy party",
+        "short": "ain't no party like a diddy party",
+        "id": 25815,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "erm what the sigma?",
+        "short": "erm what the sigma?",
+        "id": 25816,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "fein",
+        "short": "fein",
+        "id": 25817,
+        "categories": ["music"]
+    }, {
+        "x": false,
+        "name": "i like my cheese drippy bruh",
+        "short": "i like my cheese drippy bruh",
+        "id": 25818,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "indian mike",
+        "short": "indian mike",
+        "id": 25819,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "knife stab",
+        "short": "knife stab",
+        "id": 25820,
+        "categories": ["violence"]
+    }, {
+        "x": false,
+        "name": "alert meme sound",
+        "short": "alert meme sound",
+        "id": 25822,
+        "categories": ["Cartoon"]
+    }, {
+        "x": false,
+        "name": "the bluetooth device is ready to pair",
+        "short": "the bluetooth device is ready to pair",
+        "id": 25823,
+        "categories": ["Cartoon"]
+    }, {
+        "x": false,
+        "name": "from screen to the ring to the pen to the king",
+        "short": "from screen to the ring to the pen to the king",
+        "id": 25824,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "ksi thick of it",
+        "short": "ksi thick of it",
+        "id": 25825,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "get out!",
+        "short": "get out!",
+        "id": 25826,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "wait wait wait what the heell",
+        "short": "wait wait wait what the heell",
+        "id": 25827,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "mike down the stairs",
+        "short": "mike down the stairs",
+        "id": 25828,
+        "categories": ["bodily functions"]
+    }, {
+        "x": false,
+        "name": "fart (slow & steady)",
+        "short": "fart (slow & steady)",
+        "id": 25743,
+        "categories": ["bodily functions"]
+    }, {
+        "x": false,
+        "name": "toilet troubles",
+        "short": "toilet troubles",
+        "id": 25744,
+        "categories": ["bodily functions"]
+    }, {
+        "x": false,
+        "name": "“who wants hot dogs” (male)",
+        "short": "“who wants hot dogs”",
+        "id": 24028,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“you’re fired” (male)",
+        "short": "“you’re fired”",
+        "id": 24030,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“bring it on” (male)",
+        "short": "“bring it on”",
+        "id": 23502,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "crowd screaming",
+        "short": "crowd screaming",
+        "id": 25692,
+        "categories": ["crowd"]
+    }, {
+        "x": false,
+        "name": "battle cry (male)",
+        "short": "battle cry",
+        "id": 25693,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "sexy whistle",
+        "short": "sexy whistle",
+        "id": 23014,
+        "categories": ["cartoon"]
+    }, {
+        "x": false,
+        "name": "wet cheek flappy",
+        "short": "wet cheek flappy",
+        "id": 22990,
+        "categories": ["bodily functions"]
+    }, {
+        "x": false,
+        "name": "scared scream (female)",
+        "short": "scared scream",
+        "id": 22867,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "cell phone ringing",
+        "short": "cell phone ringing",
+        "id": 22824,
+        "categories": ["household"]
+    }, {
+        "x": false,
+        "name": "monster scream",
+        "short": "monster scream",
+        "id": 22801,
+        "categories": ["Animal"]
+    }, {
+        "x": false,
+        "name": "“5-4-3-2-1” countdown (male)",
+        "short": "“5-4-3-2-1” countdown",
+        "id": 22779,
+        "categories": ["voice"]
+    }, {
+        "x": true,
+        "name": "male urinating into toilet",
+        "short": "male urinating into toilet",
+        "id": 22732,
+        "categories": ["bodily functions"]
+    }, {
+        "x": false,
+        "name": "“back by popular demand” (male)",
+        "short": "“back by popular demand”",
+        "id": 22719,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“good girl” (female)",
+        "short": "“good girl”",
+        "id": 22692,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "fast heartbeat",
+        "short": "fast heartbeat",
+        "id": 22641,
+        "categories": ["bodily functions"]
+    }, {
+        "x": true,
+        "name": "wet manipulation",
+        "short": "wet manipulation",
+        "id": 22611,
+        "categories": ["violence"]
+    }, {
+        "x": true,
+        "name": "hail of bullets",
+        "short": "hail of bullets",
+        "id": 22624,
+        "categories": ["violence"]
+    }, {
+        "x": true,
+        "name": "handgun firing multiple shots",
+        "short": "handgun firing multiple shots",
+        "id": 22625,
+        "categories": ["violence"]
+    }, {
+        "x": true,
+        "name": "machine gun fire",
+        "short": "machine gun fire",
+        "id": 22627,
+        "categories": ["violence"]
+    }, {
+        "x": false,
+        "name": "giggle (female)",
+        "short": "giggle",
+        "id": 22600,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "large explosion",
+        "short": "large explosion",
+        "id": 22545,
+        "categories": ["explosion"]
+    }, {
+        "x": false,
+        "name": "crowd saying “Surprise!”",
+        "short": "crowd saying “Surprise!”",
+        "id": 22498,
+        "categories": ["crowd"]
+    }, {
+        "x": false,
+        "name": "crowd saying “5, 4, 3, 2...”",
+        "short": "crowd saying “5, 4, 3, 2...”",
+        "id": 22485,
+        "categories": ["crowd"]
+    }, {
+        "x": false,
+        "name": "long cartoon kiss",
+        "short": "long cartoon kiss",
+        "id": 22388,
+        "categories": ["cartoon", "human"]
+    }, {
+        "x": false,
+        "name": "cartoon insane laughter",
+        "short": "cartoon insane laughter",
+        "id": 22390,
+        "categories": ["cartoon", "voice"]
+    }, {
+        "x": false,
+        "name": "“tada!” (male)",
+        "short": "“tada!”",
+        "id": 24026,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“this is delicious” (male)",
+        "short": "“this is delicious”",
+        "id": 24027,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "clearing throat (male)",
+        "short": "clearing throat",
+        "id": 25690,
+        "categories": ["human"] 
+    }, {
+        "x": false,
+        "name": "blowing horn badly",
+        "short": "blowing horn badly",
+        "id": 25687,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "guitar ending riff",
+        "short": "guitar ending riff",
+        "id": 23492,
+        "categories": ["Music"]
+    }, {
+        "x": false,
+        "name": "whip crack",
+        "short": "whip crack",
+        "id": 22992,
+        "categories": ["violence"]  
+    }, {
+        "x": false,
+        "name": "“ouch” (male)",
+        "short": "“ouch”",
+        "id": 22969,
+        "categories": ["voice"]
+     }, {
+        "x": false,
+        "name": "horror scream (female)",
+        "short": "horror scream",
+        "id": 22866,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "puking into toilet",
+        "short": "puking into toilet",
+        "id": 22838,
+        "categories": ["bodily functions"]
+    }, {
+        "x": false,
+        "name": "long police siren",
+        "short": "long police siren",
+        "id": 22834,
+        "categories": ["alarm", "vehicle"]
+    }, {
+        "x": true,
+        "name": "porn music",
+        "short": "porn music",
+        "id": 22835,
+        "categories": ["Music", "sexual"]
+    }, {
+        "x": false,
+        "name": "“hello” (male)",
+        "short": "“hello”",
+        "id": 22785,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "laughtrack",
+        "short": "laughtrack",
+        "id": 22777,
+        "categories": ["crowd"]
+    }, {
+        "x": false,
+        "name": "“try again” (male)",
+        "short": "“try again”",
+        "id": 22738,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“this may take a while” (male)",
+        "short": "“this may take a while”",
+        "id": 22748,
+        "categories": ["voice"] 
+    }, {
+        "x": false,
+        "name": "“Hello, is anybody there?” (male)",
+        "short": "“Hello, is anybody there?”",
+        "id": 22723,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“made in the USA” (male)",
+        "short": "“made in the USA”",
+        "id": 22725,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“softer” (female)",
+        "short": "“softer”",
+        "id": 22707,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "67",
+        "short": "67",
+        "id": 31482,
+        "categories": ["voice"]
+    }, {
+        "x": true,
+        "name": "shotgun blast",
+        "short": "shotgun blast",
+        "id": 22636,
+        "categories": ["violence"]
+    }, {
+        "x": false,
+        "name": "harp gliss/dreaming",
+        "short": "harp gliss/dreaming",
+        "id": 22639,
+        "categories": ["Music"]
+    }, {
+        "x": true,
+        "name": "slice off head",
+        "short": "slice off head",
+        "id": 22613,
+        "categories": ["violence"]
+    }, {
+        "x": false,
+        "name": "evacuating bowels",
+        "short": "evacuating bowels",
+        "id": 22617,
+        "categories": ["bodily functions"] 
+    }, {
+        "x": false,
+        "name": "messy fart",
+        "short": "messy fart",
+        "id": 22574,
+        "categories": ["bodily functions"]
+    }, {
+        "x": false,
+        "name": "electric chair",
+        "short": "electric chair",
+        "id": 22541,
+        "categories": ["electronic/machine"]
+    }, {
+        "x": false,
+        "name": "big explosion with glass",
+        "short": "big explosion with glass",
+        "id": 22546,
+        "categories": ["explosion"]
+    }, {
+        "x": false,
+        "name": "chimp freaking out",
+        "short": "chimp freaking out",
+        "id": 22455,
+        "categories": ["Animal"]
+    }, {
+        "x": false,
+        "name": "car skid and crash",
+        "short": "car skid and crash",
+        "id": 22473,
+        "categories": ["vehicle"]
+    }, {
+        "x": false,
+        "name": "person choking",
+        "short": "person choking",
+        "id": 22458,
+        "categories": ["human"]
+    }, {
+        "x": false,
+        "name": "cartoon high-pitched gibberish",
+        "short": "cartoon high-pitched gibberish",
+        "id": 22442,
+        "categories": ["cartoon", "voice"]
+    }, {
+        "x": false,
+        "name": "heavy panting",
+        "short": "heavy panting",
+        "id": 22681,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“You’re not listening to me!” (female)",
+        "short": "“You’re not listening to me!”",
+        "id": 25701,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "“What are you waiting for?!” (male)",
+        "short": "“What are you waiting for?!”",
+        "id": 25711,
+        "categories": ["voice"]
+    }, {
+        "x": false,
+        "name": "banjo song ending",
+        "short": "banjo song ending",
+        "id": 22280,
+        "categories": ["Music"]         
+    },     {
+      "x": false,
+      "name": "terrified scream (male)",
+      "short": "terrified scream",
+      "id": 25720,
+      "categories": [
+        "voice"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "obnoxious belch",
+      "short": "obnoxious belch",
+      "id": 25708,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "toilet plunger plunging",
+      "short": "toilet plunger plunging",
+      "id": 25721,
+      "categories": [
+        "liquid"
+      ]
+    }, 
+    {
+      "x": true,
+      "name": "vibrating “massager”",
+      "short": "vibrating “massager”",
+      "id": 22965,
+      "categories": [
+        "sexual"
+      ]
+    },
+    {
+      "x": false,
+      "name": "“All hail the king!” (male)",
+      "short": "“All hail the king!”",
+      "id": 25662,
+      "categories": [
+        "voice"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "police siren drive by",
+      "short": "police siren drive by",
+      "id": 22879,
+      "categories": [
+        "alarm",
+        "vehicle"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "human sniffing",
+      "short": "human sniffing",
+      "id": 22890,
+      "categories": [
+        "voice"
+      ]
+    },
+
+
+    {
+      "x": false,
+      "name": "pained scream (male)",
+      "short": "pained scream",
+      "id": 22869,
+      "categories": [
+        "voice"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "“regular or decaf” (male)",
+      "short": "“regular or decaf”",
+      "id": 22735,
+      "categories": [
+        "voice"
+      ]
+    },
+
+
+    {
+      "x": false,
+      "name": "agitated pig squeals",
+      "short": "agitated pig squeals",
+      "id": 22831,
+      "categories": [
+        "Animal"
+      ]
+    },
+
+{
+      "x": false,
+      "name": "group of screaming fans (female)",
+      "short": "group of screaming fans",
+      "id": 25668,
+      "categories": [
+        "crowd"
+      ]
+    },
+
+{
+      "x": false,
+      "name": "tortured scream (female)",
+      "short": "tortured scream",
+      "id": 22745,
+      "categories": [
+        "voice"
+      ]
+    },
+
+{
+      "x": true,
+      "name": "male urinating outside",
+      "short": "male urinating outside",
+      "id": 22733,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+
+{
+      "x": false,
+      "name": "“Not there, you idiot!” (female)",
+      "short": "“Not there, you idiot!”",
+      "id": 22700,
+      "categories": [
+        "voice"
+      ]
+    },
+
+{
+      "x": true,
+      "name": "sexual moaning (female)",
+      "short": "sexual moaning",
+      "id": 22702,
+      "categories": [
+        "sexual",
+        "voice"
+      ]
+    },
+{
+      "x": true,
+      "name": "orgasm (female)",
+      "short": "orgasm",
+      "id": 22703,
+      "categories": [
+        "sexual",
+        "voice"
+      ]
+    },
+{
+      "x": false,
+      "name": "“press here” (female)",
+      "short": "“press here”",
+      "id": 22705,
+      "categories": [
+        "voice"
+      ]
+    },{
+      "x": false,
+      "name": "“breathe deeply” (female)",
+      "short": "“breathe deeply”",
+      "id": 22686,
+      "categories": [
+        "voice"
+      ]
+    },
+{
+      "x": false,
+      "name": "“good boy” (female)",
+      "short": "“good boy”",
+      "id": 22691,
+      "categories": [
+        "voice"
+      ]
+    },
+{
+      "x": true,
+      "name": "squishy wetness",
+      "short": "squishy wetness",
+      "id": 22615,
+      "categories": [
+        "violence"
+      ]
+    },
+
+{
+      "x": true,
+      "name": "slicing off limb",
+      "short": "slicing off limb",
+      "id": 22614,
+      "categories": [
+        "violence"
+      ]
+    },
+{
+      "x": true,
+      "name": "shotgun cock",
+      "short": "shotgun cock",
+      "id": 22637,
+      "categories": [
+        "violence"
+      ]
+    },
+{
+      "x": false,
+      "name": "liquid squirt",
+      "short": "liquid squirt",
+      "id": 22612,
+      "categories": [
+        "violence"
+      ]
+    },{
+      "x": true,
+      "name": "gun cock and shoot",
+      "short": "gun cock and shoot",
+      "id": 22619,
+      "categories": [
+        "violence"
+      ]
+    },
+{
+      "x": false,
+      "name": "squeaker fart",
+      "short": "squeaker fart",
+      "id": 22572,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "hot, muffled pants fart",
+      "short": "hot, muffled pants fart",
+      "id": 25671,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "hacking cough",
+      "short": "hacking cough",
+      "id": 25672,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "forced fart",
+      "short": "forced fart",
+      "id": 22568,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "small crowd crying",
+      "short": "small crowd crying",
+      "id": 22492,
+      "categories": [
+        "crowd"
+      ]
+    },{
+      "x": false,
+      "name": "chainsaw rev",
+      "short": "chainsaw rev",
+      "id": 22450,
+      "categories": [
+        "tools",
+        "violence"
+      ]
+    },{
+      "x": false,
+      "name": "small crowd shouting “hooray”",
+      "short": "small crowd shouting “hooray”",
+      "id": 22494,
+      "categories": [
+        "crowd"
+      ]
+    },
+{
+      "x": false,
+      "name": "scat singing (old man)",
+      "short": "scat singing (old man)",
+      "id": 25713,
+      "categories": [
+        "Music",
+        "voice"
+      ]
+    },
+{
+      "x": false,
+      "name": "fart (suprisingly wet)",
+      "short": "fart (suprisingly wet)",
+      "id": 25712,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "pounding on door",
+      "short": "pounding on door",
+      "id": 22523,
+      "categories": [
+        "household"
+      ]
+    },
+{
+      "x": false,
+      "name": "“Here kitty, kitty.” (male)",
+      "short": "“Here kitty, kitty.”",
+      "id": 25702,
+      "categories": [
+        "voice"
+      ]
+    },
+{
+      "x": false,
+      "name": "car speed, skid, and crash",
+      "short": "car speed, skid, and crash",
+      "id": 22350,
+      "categories": [
+        "vehicle"
+      ]
+    },
+{
+      "x": false,
+      "name": "squeaky bed",
+      "short": "squeaky bed",
+      "id": 22283,
+      "categories": [
+        "household",
+        "sexual"
+      ]
+    }]
+}
