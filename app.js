@@ -1,4 +1,4 @@
-const APP_VERSION = "3.1.0-Diddlery-Gobbler-Sigma-Turbo-Fix";
+const APP_VERSION = "3.1.0-Diddler1y-Gobbler-Sigma-Turbo-Fix";
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
@@ -88,6 +88,27 @@ async function init() {
 
   render();
   registerServiceWorker();
+}
+
+// Play a combo (two sounds) without awarding points — used on judging screen
+async function replayCombo(index) {
+  const entry = state.playbackQueue[index];
+  if (!entry) return;
+  if (state.isPlaying) return;
+
+  state.isPlaying = true;
+  render();
+
+  try {
+    await playSound(entry.sounds[0]?.id).catch(() => {});
+    await wait(SOUND_GAP_MS);
+    await playSound(entry.sounds[1]?.id).catch(() => {});
+  } catch (err) {
+    console.warn('replayCombo error', err);
+  }
+
+  state.isPlaying = false;
+  render();
 }
 
 function handleConnectionChange() {
@@ -319,8 +340,7 @@ function renderJudging() {
         <div class="combo-row" style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:8px;">
           <div class="combo-text">${names}</div>
           <div style="display:flex;gap:8px;">
-            <button class="outline-button" data-play="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Play">▶</button>
-            <button class="outline-button" data-select="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Select">✓</button>
+                <button class="outline-button" data-play="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Play">▶</button>
           </div>
         </div>
       `;
@@ -399,10 +419,6 @@ function attachHandlersForStage() {
       // Play combo (no award)
       document.querySelectorAll("[data-play]").forEach((button) =>
         button.addEventListener("click", () => replayCombo(Number(button.dataset.play))),
-      );
-      // Select/award this combo
-      document.querySelectorAll("[data-select]").forEach((button) =>
-        button.addEventListener("click", () => awardCombo(Number(button.dataset.select))),
       );
       break;
     case "winner":
@@ -893,26 +909,7 @@ async function playSound(soundId) {
 }
 
 async function awardCombo(index) {
-
-  async function replayCombo(index) {
-    const entry = state.playbackQueue[index];
-    if (!entry) return;
-    if (state.isPlaying) return;
-
-    state.isPlaying = true;
-    render();
-
-    try {
-      await playSound(entry.sounds[0]?.id).catch(() => {});
-      await wait(SOUND_GAP_MS);
-      await playSound(entry.sounds[1]?.id).catch(() => {});
-    } catch (err) {
-      console.warn('replayCombo error', err);
-    }
-
-    state.isPlaying = false;
-    render();
-  }
+  
   const entry = state.playbackQueue[index];
   if (!entry) return;
   
