@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const APP_VERSION = "2.2.0-iOS-SingleAudio";
-=======
 const APP_VERSION = "2.1.0-iOS-Fix";
->>>>>>> parent of cb9c92f (ker)
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
@@ -10,9 +6,6 @@ const SOUNDS_PER_TURN = 6;
 const POINTS_TO_WIN = 3;
 const SOUND_GAP_MS = 100;
 const PLAYER_GAP_MS = 1500;
-
-// Single audio element for iOS compatibility (reuse instead of creating new ones)
-let globalAudioElement = null;
 
 const state = {
   stage: "loading",
@@ -600,71 +593,49 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 
 async function playSound(soundId) {
   if (!soundId) return wait(0);
-
-  // Try multiple candidate formats (useful for iOS which doesn't support OGG)
-  const candidates = getAudioSrcCandidates(soundId);
-  let audioUrl = null;
-  let createdBlobUrl = null;
-
+  const source = getAudioSrc(soundId);
+  const fullUrl = new URL(source, window.location.href).href;
+  
+  // iOS Safari works better with blob URLs, especially for cached content
+  // Always use blob URLs on iOS for consistency
+  let audioUrl = fullUrl;
+  
   if ('caches' in window) {
     try {
       const cache = await caches.open('earwax-runtime-v2');
-      for (const candidate of candidates) {
-        const full = new URL(candidate, window.location.href).href;
+      const cachedResponse = await cache.match(fullUrl);
+      
+      if (cachedResponse) {
+        // Convert cached response to blob URL for iOS compatibility
+        const blob = await cachedResponse.blob();
+        audioUrl = URL.createObjectURL(blob);
+        needsBlobCleanup = true;
+      } else if (isIOS && navigator.onLine) {
+        // On iOS, even when online, fetch and convert to blob for consistency
         try {
-          const cachedResponse = await cache.match(full);
-          if (cachedResponse) {
-            const blob = await cachedResponse.blob();
+          const response = await fetch(fullUrl);
+          if (response.ok) {
+            const blob = await response.blob();
             audioUrl = URL.createObjectURL(blob);
-            createdBlobUrl = audioUrl;
-            break;
+            needsBlobCleanup = true;
           }
-          // If online, try fetching the candidate and cache it
-          if (navigator.onLine) {
-            try {
-              const response = await fetch(full, { cache: 'no-cache' });
-              if (response.ok) {
-                const blob = await response.blob();
-                audioUrl = URL.createObjectURL(blob);
-                createdBlobUrl = audioUrl;
-                try { await cache.put(full, response.clone()); } catch (err) { /* ignore */ }
-                break;
-              }
-            } catch (err) {
-              // fetch failed for this candidate, try next
-            }
-          }
-        } catch (err) {
-          // ignore and try next candidate
+        } catch (error) {
+          console.warn("Failed to fetch for blob conversion:", error);
         }
       }
     } catch (error) {
-      console.warn("Failed to get cached audio:", error);
+      console.warn("Failed to get cached audio, using direct URL:", error);
     }
-  }
-
-  // If no cached/fetched candidate found, fall back to the first candidate URL
-  if (!audioUrl) {
-    audioUrl = new URL(candidates[0], window.location.href).href;
-    createdBlobUrl = null;
   }
   
   return new Promise((resolve) => {
     let resolved = false;
+    let blobUrl = null;
     let timeoutId = null;
     let maxTimeoutId = null;
-    let blobUrl = null;
-    const needsBlobCleanup = audioUrl.startsWith('blob:');
-    if (needsBlobCleanup) {
-      blobUrl = audioUrl;
-    }
     
-    // Use single global audio element for iOS compatibility
-    const audio = getGlobalAudio();
-    
-    // Stop any current playback and reset
-    audio.pause();
-    audio.currentTime = 0;
+    const audio = new Audio();
+    audio.preload = "auto";
     
     const cleanup = () => {
       if (resolved) return;
@@ -677,8 +648,14 @@ async function playSound(soundId) {
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("error", onError);
       audio.removeEventListener("canplaythrough", onCanPlay);
+      audio.removeEventListener("loadeddata", onCanPlay);
+      audio.removeEventListener("canplay", onCanPlay);
+      // Clean up audio element
+      audio.pause();
+      audio.src = "";
+      audio.load();
       // Clean up blob URL if we created one
-      if (needsBlobCleanup && blobUrl) {
+      if (needsBlobCleanup && blobUrl && blobUrl.startsWith('blob:')) {
         URL.revokeObjectURL(blobUrl);
       }
       resolve();
@@ -914,30 +891,8 @@ function formatPrompt(promptName, replacementName, fallback = "___") {
   return promptName.replace(/<ANY>/g, replacement);
 }
 
-function getAudioSrcCandidates(id) {
-  const base = `Audio/${id}`;
-  if (isIOS) {
-    // Prefer mobile-friendly formats on iOS
-    return [`${base}.m4a`, `${base}.mp3`, `${base}.aac`, `${base}.ogg`];
-  }
-  return [`${base}.ogg`];
-}
-
-// Ensure a single reusable HTMLAudioElement exists (helps on iOS)
-function getGlobalAudio() {
-  if (!globalAudioElement) {
-    globalAudioElement = document.createElement('audio');
-    globalAudioElement.preload = 'auto';
-    globalAudioElement.controls = false;
-    globalAudioElement.crossOrigin = 'anonymous';
-    // playsinline is harmless for audio and helps avoid issues on some platforms
-    globalAudioElement.setAttribute('playsinline', '');
-    // Do not add visible controls; keep element off-screen
-    globalAudioElement.style.position = 'absolute';
-    globalAudioElement.style.left = '-9999px';
-    document.body.appendChild(globalAudioElement);
-  }
-  return globalAudioElement;
+function getAudioSrc(id) {
+  return `Audio/${id}.ogg`;
 }
 
 async function preloadAllAudio() {
@@ -958,8 +913,7 @@ async function preloadAllAudio() {
       // Process batch in parallel
       await Promise.all(
         batch.map(async (audio) => {
-          // Preload the preferred candidate for this platform (first candidate)
-          const audioUrl = getAudioSrcCandidates(audio.id)[0];
+          const audioUrl = getAudioSrc(audio.id);
           const fullUrl = new URL(audioUrl, window.location.href).href;
           
           try {
