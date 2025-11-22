@@ -559,8 +559,10 @@ async function playSubmissionQueue() {
       }
       
       // Wait before next player (unless it's the last one)
+      // iOS needs longer delays between players
       if (i < state.playbackQueue.length - 1) {
-        await wait(PLAYER_GAP_MS);
+        const delay = /iPad|iPhone|iPod/.test(navigator.userAgent) ? PLAYER_GAP_MS * 2 : PLAYER_GAP_MS;
+        await wait(delay);
       }
     } catch (error) {
       console.error(`Error playing submission for ${entry.player}:`, error);
@@ -574,16 +576,20 @@ async function playSubmissionQueue() {
   render();
 }
 
+// Detect iOS
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
 async function playSound(soundId) {
   if (!soundId) return wait(0);
   const source = getAudioSrc(soundId);
   const fullUrl = new URL(source, window.location.href).href;
   
-  // Check if we're offline and need to use cached audio
-  // iOS Safari requires blob URLs for cached audio to work offline
+  // iOS Safari works better with blob URLs, especially for cached content
+  // Always use blob URLs on iOS for consistency
   let audioUrl = fullUrl;
   
-  if (!navigator.onLine && 'caches' in window) {
+  if ('caches' in window) {
     try {
       const cache = await caches.open('earwax-runtime-v2');
       const cachedResponse = await cache.match(fullUrl);
@@ -592,6 +598,17 @@ async function playSound(soundId) {
         // Convert cached response to blob URL for iOS compatibility
         const blob = await cachedResponse.blob();
         audioUrl = URL.createObjectURL(blob);
+      } else if (isIOS && navigator.onLine) {
+        // On iOS, even when online, fetch and convert to blob for consistency
+        try {
+          const response = await fetch(fullUrl);
+          if (response.ok) {
+            const blob = await response.blob();
+            audioUrl = URL.createObjectURL(blob);
+          }
+        } catch (error) {
+          console.warn("Failed to fetch for blob conversion:", error);
+        }
       }
     } catch (error) {
       console.warn("Failed to get cached audio, using direct URL:", error);
@@ -625,7 +642,7 @@ async function playSound(soundId) {
       audio.src = "";
       audio.load();
       // Clean up blob URL if we created one
-      if (blobUrl && blobUrl.startsWith('blob:')) {
+      if (needsBlobCleanup && blobUrl && blobUrl.startsWith('blob:')) {
         URL.revokeObjectURL(blobUrl);
       }
       resolve();
@@ -646,22 +663,51 @@ async function playSound(soundId) {
       if (resolved || playAttempted) return;
       playAttempted = true;
       
+      // On iOS, ensure audio is fully loaded before playing
+      if (isIOS && audio.readyState < 3) { // HAVE_FUTURE_DATA
+        // Wait a bit more for iOS
+        setTimeout(() => {
+          if (resolved) return;
+          doPlay();
+        }, 100);
+        return;
+      }
+      
+      doPlay();
+    };
+    
+    const doPlay = () => {
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             // Playback started successfully, wait for it to end
-            console.log("Audio playing:", source);
+            console.log("Audio playing:", source, "iOS:", isIOS);
           })
           .catch((error) => {
-            console.warn("Audio play failed:", error, "for", source);
-            // If play fails, wait a bit then resolve anyway to not block
-            setTimeout(() => {
-              if (!resolved) {
-                console.warn("Resolving after play failure to prevent blocking");
-                cleanup();
-              }
-            }, 500);
+            console.warn("Audio play failed:", error, "for", source, "iOS:", isIOS);
+            // On iOS, try once more after a delay
+            if (isIOS && !resolved) {
+              setTimeout(() => {
+                if (!resolved) {
+                  audio.play().catch(() => {
+                    // Final attempt failed, resolve anyway
+                    if (!resolved) {
+                      console.warn("Final play attempt failed, resolving");
+                      cleanup();
+                    }
+                  });
+                }
+              }, 200);
+            } else {
+              // If play fails, wait a bit then resolve anyway to not block
+              setTimeout(() => {
+                if (!resolved) {
+                  console.warn("Resolving after play failure to prevent blocking");
+                  cleanup();
+                }
+              }, 500);
+            }
           });
       } else {
         // No promise returned, assume it's playing or will play
@@ -682,28 +728,46 @@ async function playSound(soundId) {
     // Add event listeners before setting source
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("error", onError);
-    audio.addEventListener("canplaythrough", onCanPlay, { once: true });
-    audio.addEventListener("loadeddata", onCanPlay, { once: true });
-    audio.addEventListener("canplay", onCanPlay, { once: true });
+    // iOS needs canplaythrough for reliable playback
+    if (isIOS) {
+      audio.addEventListener("canplaythrough", onCanPlay, { once: true });
+    } else {
+      audio.addEventListener("canplaythrough", onCanPlay, { once: true });
+      audio.addEventListener("loadeddata", onCanPlay, { once: true });
+      audio.addEventListener("canplay", onCanPlay, { once: true });
+    }
     
     // Set source and load
     blobUrl = audioUrl;
     audio.src = audioUrl;
+    
+    // On iOS, set volume explicitly and ensure proper loading
+    if (isIOS) {
+      audio.volume = 1.0;
+    }
+    
     audio.load();
     
+    // On iOS, add a small delay after load to ensure it's ready
+    // Note: Can't use await in Promise constructor, so we rely on event listeners
+    
     // Fallback timeout in case events don't fire or audio is already ready
+    // iOS needs more time to load
+    const timeoutDelay = isIOS ? 3000 : 2000;
     timeoutId = setTimeout(() => {
       if (resolved) return;
       
-      if (audio.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+      // On iOS, wait for HAVE_FUTURE_DATA (3) or HAVE_ENOUGH_DATA (4)
+      const minReadyState = isIOS ? 3 : 2;
+      if (audio.readyState >= minReadyState) {
         attemptPlay();
       } else {
         // Audio didn't load in time
-        console.warn("Audio didn't load in time:", source, "readyState:", audio.readyState, "Online:", navigator.onLine);
+        console.warn("Audio didn't load in time:", source, "readyState:", audio.readyState, "iOS:", isIOS, "Online:", navigator.onLine);
         // Try to play anyway - might work
         attemptPlay();
       }
-    }, 2000);
+    }, timeoutDelay);
     
     // Maximum timeout - force resolve after 10 seconds to prevent infinite hanging
     maxTimeoutId = setTimeout(() => {
