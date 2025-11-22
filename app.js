@@ -302,12 +302,9 @@ function renderPlayback() {
     ${renderScoreboard()}
     <section class="panel">
       <div class="prompt-card">${formatPrompt(state.currentPrompt.name, state.promptTarget, state.promptTarget ?? "???")}</div>
-      <p>Hand the device to the judge. Use "Play Next" to play each submission, or enable Auto-play.</p>
+      <p>Hand the device to the judge. Use "Play Next" to play each submission.</p>
       ${revealed}
       <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;">
-        <label style="display:inline-flex;align-items:center;gap:6px;">
-          <input id="autoplay-toggle" type="checkbox" ${state.autoPlay === null ? (!isIOS ? "checked" : "") : (state.autoPlay ? "checked" : "")} /> Auto-play
-        </label>
         <button id="play-next" ${state.isPlaying ? "disabled" : ""}>${playLabel}</button>
       </div>
     </section>
@@ -316,13 +313,19 @@ function renderPlayback() {
 
 function renderJudging() {
   const comboButtons = state.playbackQueue
-    .map(
-      (entry, index) => `
-        <button class="outline-button" data-choice="${index}" ${state.isPlaying ? "disabled" : ""}>
-          ${entry.sounds.map((sound) => sound.name).join(" + ")}
-        </button>
-      `,
-    )
+    .map((entry, index) => {
+      const names = entry.sounds.map((sound) => sound.name).join(" + ");
+      return `
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="outline-button" data-choice="${index}" ${state.isPlaying ? "disabled" : ""}>
+            ${names}
+          </button>
+          <button class="outline-button" data-replay="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Replay">
+            ▶
+          </button>
+        </div>
+      `;
+    })
     .join("");
 
   const playingMessage = state.isPlaying ? "<p>Playing winning combo…</p>" : "";
@@ -392,17 +395,13 @@ function attachHandlersForStage() {
       break;
     case "playback":
       document.getElementById("play-next")?.addEventListener("click", playSubmissionQueue);
-      document.getElementById("autoplay-toggle")?.addEventListener("change", (e) => {
-        try {
-          state.autoPlay = !!e.target.checked;
-        } catch (err) {
-          state.autoPlay = !!document.getElementById("autoplay-toggle")?.checked;
-        }
-      });
       break;
     case "judging":
       document.querySelectorAll("[data-choice]").forEach((button) =>
         button.addEventListener("click", () => awardCombo(Number(button.dataset.choice))),
+      );
+      document.querySelectorAll("[data-replay]").forEach((button) =>
+        button.addEventListener("click", () => replayCombo(Number(button.dataset.replay))),
       );
       break;
     case "winner":
@@ -635,12 +634,7 @@ async function playCurrentSubmission() {
     state.playbackIndex = idx + 1;
     state.isPlaying = false;
     render();
-
-    if (state.autoPlay) {
-      const delay = isIOS ? PLAYER_GAP_MS * 3 : PLAYER_GAP_MS;
-      await wait(delay);
-      await playCurrentSubmission();
-    }
+    // Stop here; manual Play Next will advance to the next submission.
   } catch (error) {
     console.error(`Error playing submission for ${entry.player}:`, error);
     state.isPlaying = false;
@@ -895,6 +889,26 @@ async function playSound(soundId) {
 }
 
 async function awardCombo(index) {
+
+  async function replayCombo(index) {
+    const entry = state.playbackQueue[index];
+    if (!entry) return;
+    if (state.isPlaying) return;
+
+    state.isPlaying = true;
+    render();
+
+    try {
+      await playSound(entry.sounds[0]?.id).catch(() => {});
+      await wait(SOUND_GAP_MS);
+      await playSound(entry.sounds[1]?.id).catch(() => {});
+    } catch (err) {
+      console.warn('replayCombo error', err);
+    }
+
+    state.isPlaying = false;
+    render();
+  }
   const entry = state.playbackQueue[index];
   if (!entry) return;
   
