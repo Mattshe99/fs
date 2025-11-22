@@ -81,16 +81,8 @@ self.addEventListener("fetch", (event) => {
 function cacheOnDemand(request) {
   return caches.match(request).then((cached) => {
     if (cached) {
-      // Return cached version with proper headers for iOS
-      return new Response(cached.body, {
-        status: 200,
-        statusText: 'OK',
-        headers: {
-          'Content-Type': 'audio/ogg',
-          'Cache-Control': 'public, max-age=31536000',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+      // Return cached response directly (preserve original headers)
+      return cached.clone();
     }
     // Try to fetch, but if offline, return empty response
     return fetch(request)
@@ -110,24 +102,12 @@ function cacheOnDemand(request) {
         // If fetch fails (offline), try cache one more time
         return caches.match(request).then((cached) => {
           if (cached) {
-            // Return cached version with proper headers
-            return new Response(cached.body, {
-              status: 200,
-              statusText: 'OK',
-              headers: {
-                'Content-Type': 'audio/ogg',
-                'Cache-Control': 'public, max-age=31536000',
-                'Access-Control-Allow-Origin': '*'
-              }
-            });
+            // Return cached response directly (preserve original headers)
+            return cached.clone();
           }
           // Return error response
           console.warn("Audio not cached and offline:", request.url);
-          return new Response("", { 
-            status: 503, 
-            statusText: "Offline",
-            headers: { "Content-Type": "audio/ogg" }
-          });
+          return new Response("", { status: 503, statusText: "Offline" });
         });
       });
   });
