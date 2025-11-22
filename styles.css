@@ -11,6 +11,17 @@
   }
 
   font-family: 'Swis721', "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+/* Selected state for sound buttons in the sound picker */
+.outline-button.selected {
+  background: #f6c84c; /* warm yellow */
+  color: #0b1020;
+  border-color: rgba(0,0,0,0.2);
+  box-shadow: 0 4px 14px rgba(246,200,76,0.15);
+}
+
+.outline-button[aria-pressed="true"] {
+  outline: 2px solid rgba(246,200,76,0.25);
+}
   background-color: #0f172a;
   color: #f1f5f9;
 }

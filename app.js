@@ -1,4 +1,4 @@
-const APP_VERSION = "3.1.0-Diddler1y-Gobbler-Sigma-Turbo-Fix";
+const APP_VERSION = "3.1.0-Diddler2y-Gobbler-Sigma-Turbo-Fix";
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
@@ -34,6 +34,7 @@ const state = {
   errorMessage: "",
   loadingProgress: 0,
   totalAudioFiles: 0,
+  reshuffleUsed: false,
 };
 
 const appRoot = document.getElementById("app");
@@ -61,7 +62,8 @@ async function init() {
     } else {
       throw new Error('Invalid format for data/audio.json');
     }
-    state.audioById = new Map(state.audioLibrary.map((item) => [item.id, item]));
+    // Normalize keys to strings so dynamic TTS ids and numeric ids match consistently
+    state.audioById = new Map(state.audioLibrary.map((item) => [String(item.id), item]));
 
     const promptsJson = await promptRes.json();
     if (Array.isArray(promptsJson)) {
@@ -244,6 +246,10 @@ function renderPromptSelection() {
     <section class="panel">
       <div class="judge-pill">Judge: ${judgeName}</div>
       <h2>Pick a prompt</h2>
+      <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center;">
+        <input id="custom-prompt-input" type="text" maxlength="200" placeholder="Or enter your own prompt here" style="flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;" />
+        <button id="add-custom-prompt" class="outline-button" disabled>Use prompt</button>
+      </div>
       <div class="grid">${promptButtons}</div>
     </section>
   `;
@@ -278,10 +284,12 @@ function renderSoundPicker() {
 
   const soundButtons = state.soundOptions
     .map((sound) => {
-      const isSelected = state.activeSelection.includes(sound.id);
+      // Compare using strings because IDs may be numeric or TTS-generated strings
+      const isSelected = state.activeSelection.includes(String(sound.id));
       const classes = ["outline-button", isSelected ? "selected" : ""].join(" ").trim();
+      const ariaPressed = isSelected ? 'aria-pressed="true"' : 'aria-pressed="false"';
       return `
-        <button class="${classes}" data-sound="${sound.id}">
+        <button class="${classes}" data-sound="${sound.id}" ${ariaPressed}>
           ${sound.name}
         </button>
       `;
@@ -295,9 +303,13 @@ function renderSoundPicker() {
       <div class="prompt-card">${formatPrompt(state.currentPrompt.name, state.promptTarget ?? state.activePlayer)}</div>
       <p>Choose two sounds in the order you want them to play.</p>
       <div class="grid">${soundButtons}</div>
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+        <input id="tts-input" type="text" maxlength="50" placeholder="Bonus: enter text (max 50 chars)" style="flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;" />
+        <button id="add-tts" class="outline-button" disabled>Add</button>
+      </div>
       <div class="help-text">Selected: ${selectionNames.join(" → ") || "None"}</div>
       <div class="stack">
-        <button id="reshuffle-sounds" class="outline-button">New sounds</button>
+        <button id="reshuffle-sounds" class="outline-button" ${state.reshuffleUsed ? "disabled" : ""}>New sounds</button>
         <button id="clear-selection" class="outline-button">Clear picks</button>
         <button id="lock-picks" ${canSubmit ? "" : "disabled"}>Lock in</button>
       </div>
@@ -312,22 +324,12 @@ function renderPlayback() {
   const total = state.playbackQueue.length;
   const idx = state.playbackIndex ?? 0;
   const entry = state.playbackQueue[idx];
-  const playLabel = state.isPlaying
-    ? "Playing…"
-    : `Play Next — ${idx + 1}/${total}`;
-
-  // Ensure autoplay checkbox reflects current state (default to non-iOS auto-play)
-  const autoplayChecked = state.autoPlay === null ? (!isIOS).toString() : (state.autoPlay ? "true" : "false");
-
   return `
     ${renderScoreboard()}
     <section class="panel">
       <div class="prompt-card">${formatPrompt(state.currentPrompt.name, state.promptTarget, state.promptTarget ?? "???")}</div>
-      <p>Hand the device to the judge. Use "Play Next" to play each submission.</p>
+      <p>Hand the device to the judge. Submissions will play automatically.</p>
       ${revealed}
-      <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;">
-        <button id="play-next" ${state.isPlaying ? "disabled" : ""}>${playLabel}</button>
-      </div>
     </section>
   `;
 }
@@ -340,7 +342,7 @@ function renderJudging() {
         <div class="combo-row" style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:8px;">
           <div class="combo-text">${names}</div>
           <div style="display:flex;gap:8px;">
-                <button class="outline-button" data-play="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Play">▶</button>
+                <button class="outline-button" data-select="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Select">Select</button>
           </div>
         </div>
       `;
@@ -398,6 +400,22 @@ function attachHandlersForStage() {
       document.querySelectorAll("[data-prompt]").forEach((button) =>
         button.addEventListener("click", () => selectPrompt(Number(button.dataset.prompt))),
       );
+
+      // Custom prompt handlers
+      const customInput = document.getElementById("custom-prompt-input");
+      const addCustomBtn = document.getElementById("add-custom-prompt");
+      if (customInput) {
+        customInput.addEventListener("input", () => {
+          if (addCustomBtn) addCustomBtn.disabled = customInput.value.trim().length === 0;
+        });
+      }
+      if (addCustomBtn) {
+        addCustomBtn.addEventListener("click", () => {
+          const text = (customInput?.value || "").trim().slice(0, 200);
+          if (!text) return;
+          submitCustomPrompt(text);
+        });
+      }
       break;
     case "submissionLobby":
       document.querySelectorAll("[data-player]").forEach((button) =>
@@ -405,20 +423,40 @@ function attachHandlersForStage() {
       );
       break;
     case "soundPicker":
+      // Use raw dataset value (string) so both numeric ids and TTS ids work
       document.querySelectorAll("[data-sound]").forEach((button) =>
-        button.addEventListener("click", () => toggleSound(Number(button.dataset.sound))),
+        button.addEventListener("click", () => toggleSound(button.dataset.sound)),
       );
       document.getElementById("reshuffle-sounds")?.addEventListener("click", reshuffleSounds);
       document.getElementById("clear-selection")?.addEventListener("click", clearSoundSelection);
       document.getElementById("lock-picks")?.addEventListener("click", submitSoundSelection);
+
+      // TTS input handlers
+      const ttsInput = document.getElementById("tts-input");
+      const addTtsBtn = document.getElementById("add-tts");
+      if (ttsInput) {
+        ttsInput.addEventListener("input", () => {
+          if (addTtsBtn) addTtsBtn.disabled = ttsInput.value.trim().length === 0;
+        });
+      }
+      if (addTtsBtn) {
+        addTtsBtn.addEventListener("click", () => {
+          const text = (ttsInput?.value || "").trim().slice(0, 50);
+          if (!text) return;
+          addTtsSound(text);
+          if (ttsInput) ttsInput.value = "";
+          addTtsBtn.disabled = true;
+        });
+      }
       break;
     case "playback":
-      document.getElementById("play-next")?.addEventListener("click", playSubmissionQueue);
+      // Playback auto-starts; no play-next button to wire
+      break;
       break;
     case "judging":
-      // Play combo (no award)
-      document.querySelectorAll("[data-play]").forEach((button) =>
-        button.addEventListener("click", () => replayCombo(Number(button.dataset.play))),
+      // Select a combo to award points and play the winning sounds
+      document.querySelectorAll("[data-select]").forEach((button) =>
+        button.addEventListener("click", () => awardCombo(Number(button.dataset.select))),
       );
       break;
     case "winner":
@@ -487,6 +525,8 @@ function startRound(advanceJudge = true) {
   state.playbackQueue = [];
   state.isPlaying = false;
   state.currentlyRevealedSounds = null;
+  // Reset reshuffle usage each round so players get one reshuffle per round
+  state.reshuffleUsed = false;
   state.stage = "promptSelection";
   render();
 }
@@ -502,6 +542,21 @@ function drawPromptOptions() {
   }
   const options = state.promptBag.splice(0, PROMPTS_PER_ROUND);
   return options;
+}
+
+// Called when judge submits a custom prompt via the prompt selection screen
+function submitCustomPrompt(text) {
+  const trimmed = String(text || "").trim();
+  if (!trimmed) return;
+  const id = `custom-${Date.now()}`;
+  const promptObj = { id, name: trimmed };
+
+  // Use the prompt immediately for this round
+  state.currentPrompt = promptObj;
+  // If prompt contains <ANY> pick a target player, otherwise leave null
+  state.promptTarget = trimmed.includes("<ANY>") ? pickPromptTarget() : null;
+  state.stage = "submissionLobby";
+  render();
 }
 
 function selectPrompt(promptId) {
@@ -531,6 +586,27 @@ function drawRandomSounds() {
   return pickRandomItems(state.audioLibrary, SOUNDS_PER_TURN);
 }
 
+// Add a TTS sound dynamically for the current player
+function addTtsSound(text) {
+  const trimmed = String(text).trim().slice(0, 50);
+  if (!trimmed) return;
+  const id = `tts-${Date.now()}`;
+  const obj = { id, name: trimmed, tts: true, text: trimmed };
+
+  // Store in audioById (keys are strings)
+  state.audioById.set(String(id), obj);
+
+  // Add to the current sound options so the player can pick it immediately
+  state.soundOptions = [obj, ...(state.soundOptions || [])];
+
+  // Auto-select if there's room
+  if (!state.activeSelection.includes(String(id)) && state.activeSelection.length < 2) {
+    state.activeSelection = [...state.activeSelection, String(id)];
+  }
+
+  render();
+}
+
 function toggleSound(soundId) {
   const alreadySelected = state.activeSelection.includes(soundId);
   if (alreadySelected) {
@@ -542,8 +618,13 @@ function toggleSound(soundId) {
 }
 
 function reshuffleSounds() {
+  if (state.reshuffleUsed) {
+    alert("You can only reshuffle once per round.");
+    return;
+  }
   state.soundOptions = drawRandomSounds();
   state.activeSelection = [];
+  state.reshuffleUsed = true;
   render();
 }
 
@@ -577,30 +658,77 @@ function submitSoundSelection() {
 function preparePlayback() {
   state.playbackQueue = shuffle([...state.submissions]);
   state.playbackIndex = 0;
+  // Enable autoplay when entering playback so submissions play automatically
+  state.autoPlay = true;
   state.stage = "playback";
+  render();
+  // Start playback asynchronously
+  playSubmissionQueue().catch((e) => console.warn('playSubmissionQueue error', e));
 }
 
 async function playSubmissionQueue() {
   if (state.isPlaying) return;
 
-  // Initialize playback state (don't reset if already progressed)
+  // Initialize playback index
   if (typeof state.playbackIndex !== "number" || state.playbackIndex < 0 || state.playbackIndex >= state.playbackQueue.length) {
     state.playbackIndex = 0;
   }
-  if (state.autoPlay === null) {
-    state.autoPlay = !isIOS; // default to auto-play on non-iOS
-  }
+
+  // Ensure we auto-play through all submissions
+  state.autoPlay = true;
 
   // Read the prompt aloud before playing submissions
   if (state.currentPrompt) {
     const formattedPrompt = formatPrompt(state.currentPrompt.name, state.promptTarget);
-    await speakText(formattedPrompt);
+    await speakText(formattedPrompt).catch(() => {});
     // Small pause after speech before starting audio
     await wait(500);
   }
 
-  // Play the first submission (and subsequent ones if autoPlay is enabled)
-  await playCurrentSubmission();
+  // Play each submission in order
+  for (let idx = state.playbackIndex; idx < state.playbackQueue.length; idx += 1) {
+    const entry = state.playbackQueue[idx];
+    if (!entry) continue;
+
+    state.playbackIndex = idx;
+    state.isPlaying = true;
+    state.currentlyRevealedSounds = entry.sounds.map((s) => s.name);
+    render();
+
+    try {
+      if (entry.sounds[0]?.id) {
+        await playSound(entry.sounds[0]?.id).catch((error) => {
+          console.warn(`Failed to play first sound for submission ${idx + 1}:`, error);
+        });
+        if (isIOS) await wait(200);
+      }
+
+      await wait(SOUND_GAP_MS);
+
+      if (entry.sounds[1]?.id) {
+        await playSound(entry.sounds[1]?.id).catch((error) => {
+          console.warn(`Failed to play second sound for submission ${idx + 1}:`, error);
+        });
+      }
+    } catch (error) {
+      console.error(`Error playing submission ${idx + 1}:`, error);
+    }
+
+    // Pause between submissions
+    state.isPlaying = false;
+    state.currentlyRevealedSounds = null;
+    render();
+    if (idx < state.playbackQueue.length - 1) {
+      await wait(PLAYER_GAP_MS);
+    }
+  }
+
+  // Finished all submissions — move to judging
+  state.stage = "judging";
+  state.playbackIndex = 0;
+  state.isPlaying = false;
+  state.currentlyRevealedSounds = null;
+  render();
 }
 
 async function playCurrentSubmission() {
@@ -667,6 +795,23 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 
 async function playSound(soundId) {
   if (!soundId) return wait(0);
+
+  // Normalize id to string for consistent lookup
+  const lookupId = String(soundId);
+  const audioEntry = state.audioById.get(lookupId);
+
+  // If this is a TTS entry, speak the text instead of loading an audio file
+  if (audioEntry && audioEntry.tts) {
+    const ttsText = audioEntry.text ?? audioEntry.name ?? "";
+    // Speak the text and return a promise that resolves when speech ends
+    try {
+      await speakText(ttsText);
+    } catch (e) {
+      console.warn('TTS play failed', e);
+    }
+    return;
+  }
+
   const source = getAudioSrc(soundId);
   const fullUrl = new URL(source, window.location.href).href;
   
