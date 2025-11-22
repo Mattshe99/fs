@@ -1,3 +1,4 @@
+const APP_VERSION = "2.1.0-iOS-Fix";
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
@@ -168,6 +169,7 @@ function renderLobby() {
   return `
     <section class="panel">
       <h2>Players</h2>
+      <div style="font-size: 10px; color: #6b7280; text-align: center; margin-bottom: 10px;">v${APP_VERSION}</div>
       <form id="player-form" class="input-row" autocomplete="off">
         <input type="text" name="playerName" placeholder="Enter player name" maxlength="18" required />
         <button type="submit">Add</button>
@@ -542,17 +544,25 @@ async function playSubmissionQueue() {
     state.currentlyRevealedSounds = entry.sounds.map((sound) => sound.name);
     render();
     
+    console.log(`Playing submission ${i + 1}/${state.playbackQueue.length} for player: ${entry.player}`);
+    
     try {
       // Play first sound
       if (entry.sounds[0]?.id) {
+        console.log(`  Playing sound 1: ${entry.sounds[0].id}`);
         await playSound(entry.sounds[0]?.id).catch((error) => {
           console.warn(`Failed to play first sound for player ${entry.player}:`, error);
         });
+        // Extra delay on iOS between sounds
+        if (isIOS) {
+          await wait(200);
+        }
       }
       await wait(SOUND_GAP_MS);
       
       // Play second sound
       if (entry.sounds[1]?.id) {
+        console.log(`  Playing sound 2: ${entry.sounds[1].id}`);
         await playSound(entry.sounds[1]?.id).catch((error) => {
           console.warn(`Failed to play second sound for player ${entry.player}:`, error);
         });
@@ -561,7 +571,8 @@ async function playSubmissionQueue() {
       // Wait before next player (unless it's the last one)
       // iOS needs longer delays between players
       if (i < state.playbackQueue.length - 1) {
-        const delay = /iPad|iPhone|iPod/.test(navigator.userAgent) ? PLAYER_GAP_MS * 2 : PLAYER_GAP_MS;
+        const delay = isIOS ? PLAYER_GAP_MS * 3 : PLAYER_GAP_MS; // Even longer on iOS
+        console.log(`  Waiting ${delay}ms before next player...`);
         await wait(delay);
       }
     } catch (error) {
@@ -598,6 +609,7 @@ async function playSound(soundId) {
         // Convert cached response to blob URL for iOS compatibility
         const blob = await cachedResponse.blob();
         audioUrl = URL.createObjectURL(blob);
+        needsBlobCleanup = true;
       } else if (isIOS && navigator.onLine) {
         // On iOS, even when online, fetch and convert to blob for consistency
         try {
@@ -605,6 +617,7 @@ async function playSound(soundId) {
           if (response.ok) {
             const blob = await response.blob();
             audioUrl = URL.createObjectURL(blob);
+            needsBlobCleanup = true;
           }
         } catch (error) {
           console.warn("Failed to fetch for blob conversion:", error);
@@ -677,33 +690,61 @@ async function playSound(soundId) {
     };
     
     const doPlay = () => {
+      console.log(`playSound: Attempting to play ${source}, readyState: ${audio.readyState}, iOS: ${isIOS}`);
+      
+      // On iOS, ensure we wait a bit more if not fully ready
+      if (isIOS && audio.readyState < 4) {
+        console.log(`playSound: iOS audio not fully ready (${audio.readyState}), waiting...`);
+        setTimeout(() => {
+          if (!resolved) {
+            doPlay();
+          }
+        }, 100);
+        return;
+      }
+      
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             // Playback started successfully, wait for it to end
-            console.log("Audio playing:", source, "iOS:", isIOS);
+            console.log(`playSound: Audio playing successfully: ${source}`);
           })
           .catch((error) => {
-            console.warn("Audio play failed:", error, "for", source, "iOS:", isIOS);
-            // On iOS, try once more after a delay
+            console.warn(`playSound: Audio play failed: ${error.message} for ${source}, iOS: ${isIOS}`);
+            // On iOS, try multiple times with increasing delays
             if (isIOS && !resolved) {
-              setTimeout(() => {
-                if (!resolved) {
-                  audio.play().catch(() => {
-                    // Final attempt failed, resolve anyway
-                    if (!resolved) {
-                      console.warn("Final play attempt failed, resolving");
-                      cleanup();
-                    }
-                  });
+              let retryCount = 0;
+              const maxRetries = 3;
+              const retry = () => {
+                if (resolved || retryCount >= maxRetries) {
+                  if (!resolved) {
+                    console.warn(`playSound: Max retries reached, resolving`);
+                    cleanup();
+                  }
+                  return;
                 }
-              }, 200);
+                retryCount++;
+                const delay = 200 * retryCount; // 200ms, 400ms, 600ms
+                console.log(`playSound: Retrying play (attempt ${retryCount}/${maxRetries}) after ${delay}ms`);
+                setTimeout(() => {
+                  if (!resolved) {
+                    audio.play()
+                      .then(() => {
+                        console.log(`playSound: Retry successful on attempt ${retryCount}`);
+                      })
+                      .catch(() => {
+                        retry();
+                      });
+                  }
+                }, delay);
+              };
+              retry();
             } else {
               // If play fails, wait a bit then resolve anyway to not block
               setTimeout(() => {
                 if (!resolved) {
-                  console.warn("Resolving after play failure to prevent blocking");
+                  console.warn("playSound: Resolving after play failure to prevent blocking");
                   cleanup();
                 }
               }, 500);
@@ -711,6 +752,7 @@ async function playSound(soundId) {
           });
       } else {
         // No promise returned, assume it's playing or will play
+        console.log("playSound: No promise returned, assuming play will work");
         setTimeout(() => {
           if (!resolved && audio.ended) {
             cleanup();
