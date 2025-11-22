@@ -631,6 +631,7 @@ async function playSound(soundId) {
   return new Promise((resolve) => {
     let resolved = false;
     let blobUrl = null;
+    let needsBlobCleanup = false;
     let timeoutId = null;
     let maxTimeoutId = null;
     
