@@ -697,6 +697,12 @@
         "id": 22707,
         "categories": ["voice"]
     }, {
+        "x": false,
+        "name": "67",
+        "short": "67",
+        "id": 31482,
+        "categories": ["voice"]
+    }, {
         "x": true,
         "name": "shotgun blast",
         "short": "shotgun blast",
@@ -786,5 +792,354 @@
         "short": "banjo song ending",
         "id": 22280,
         "categories": ["Music"]         
+    },     {
+      "x": false,
+      "name": "terrified scream (male)",
+      "short": "terrified scream",
+      "id": 25720,
+      "categories": [
+        "voice"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "obnoxious belch",
+      "short": "obnoxious belch",
+      "id": 25708,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "toilet plunger plunging",
+      "short": "toilet plunger plunging",
+      "id": 25721,
+      "categories": [
+        "liquid"
+      ]
+    }, 
+    {
+      "x": true,
+      "name": "vibrating “massager”",
+      "short": "vibrating “massager”",
+      "id": 22965,
+      "categories": [
+        "sexual"
+      ]
+    },
+    {
+      "x": false,
+      "name": "“All hail the king!” (male)",
+      "short": "“All hail the king!”",
+      "id": 25662,
+      "categories": [
+        "voice"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "police siren drive by",
+      "short": "police siren drive by",
+      "id": 22879,
+      "categories": [
+        "alarm",
+        "vehicle"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "human sniffing",
+      "short": "human sniffing",
+      "id": 22890,
+      "categories": [
+        "voice"
+      ]
+    },
+
+
+    {
+      "x": false,
+      "name": "pained scream (male)",
+      "short": "pained scream",
+      "id": 22869,
+      "categories": [
+        "voice"
+      ]
+    },
+
+    {
+      "x": false,
+      "name": "“regular or decaf” (male)",
+      "short": "“regular or decaf”",
+      "id": 22735,
+      "categories": [
+        "voice"
+      ]
+    },
+
+
+    {
+      "x": false,
+      "name": "agitated pig squeals",
+      "short": "agitated pig squeals",
+      "id": 22831,
+      "categories": [
+        "Animal"
+      ]
+    },
+
+{
+      "x": false,
+      "name": "group of screaming fans (female)",
+      "short": "group of screaming fans",
+      "id": 25668,
+      "categories": [
+        "crowd"
+      ]
+    },
+
+{
+      "x": false,
+      "name": "tortured scream (female)",
+      "short": "tortured scream",
+      "id": 22745,
+      "categories": [
+        "voice"
+      ]
+    },
+
+{
+      "x": true,
+      "name": "male urinating outside",
+      "short": "male urinating outside",
+      "id": 22733,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+
+{
+      "x": false,
+      "name": "“Not there, you idiot!” (female)",
+      "short": "“Not there, you idiot!”",
+      "id": 22700,
+      "categories": [
+        "voice"
+      ]
+    },
+
+{
+      "x": true,
+      "name": "sexual moaning (female)",
+      "short": "sexual moaning",
+      "id": 22702,
+      "categories": [
+        "sexual",
+        "voice"
+      ]
+    },
+{
+      "x": true,
+      "name": "orgasm (female)",
+      "short": "orgasm",
+      "id": 22703,
+      "categories": [
+        "sexual",
+        "voice"
+      ]
+    },
+{
+      "x": false,
+      "name": "“press here” (female)",
+      "short": "“press here”",
+      "id": 22705,
+      "categories": [
+        "voice"
+      ]
+    },{
+      "x": false,
+      "name": "“breathe deeply” (female)",
+      "short": "“breathe deeply”",
+      "id": 22686,
+      "categories": [
+        "voice"
+      ]
+    },
+{
+      "x": false,
+      "name": "“good boy” (female)",
+      "short": "“good boy”",
+      "id": 22691,
+      "categories": [
+        "voice"
+      ]
+    },
+{
+      "x": true,
+      "name": "squishy wetness",
+      "short": "squishy wetness",
+      "id": 22615,
+      "categories": [
+        "violence"
+      ]
+    },
+
+{
+      "x": true,
+      "name": "slicing off limb",
+      "short": "slicing off limb",
+      "id": 22614,
+      "categories": [
+        "violence"
+      ]
+    },
+{
+      "x": true,
+      "name": "shotgun cock",
+      "short": "shotgun cock",
+      "id": 22637,
+      "categories": [
+        "violence"
+      ]
+    },
+{
+      "x": false,
+      "name": "liquid squirt",
+      "short": "liquid squirt",
+      "id": 22612,
+      "categories": [
+        "violence"
+      ]
+    },{
+      "x": true,
+      "name": "gun cock and shoot",
+      "short": "gun cock and shoot",
+      "id": 22619,
+      "categories": [
+        "violence"
+      ]
+    },
+{
+      "x": false,
+      "name": "squeaker fart",
+      "short": "squeaker fart",
+      "id": 22572,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "hot, muffled pants fart",
+      "short": "hot, muffled pants fart",
+      "id": 25671,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "hacking cough",
+      "short": "hacking cough",
+      "id": 25672,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "forced fart",
+      "short": "forced fart",
+      "id": 22568,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "small crowd crying",
+      "short": "small crowd crying",
+      "id": 22492,
+      "categories": [
+        "crowd"
+      ]
+    },{
+      "x": false,
+      "name": "chainsaw rev",
+      "short": "chainsaw rev",
+      "id": 22450,
+      "categories": [
+        "tools",
+        "violence"
+      ]
+    },{
+      "x": false,
+      "name": "small crowd shouting “hooray”",
+      "short": "small crowd shouting “hooray”",
+      "id": 22494,
+      "categories": [
+        "crowd"
+      ]
+    },
+{
+      "x": false,
+      "name": "scat singing (old man)",
+      "short": "scat singing (old man)",
+      "id": 25713,
+      "categories": [
+        "Music",
+        "voice"
+      ]
+    },
+{
+      "x": false,
+      "name": "fart (suprisingly wet)",
+      "short": "fart (suprisingly wet)",
+      "id": 25712,
+      "categories": [
+        "bodily functions"
+      ]
+    },
+{
+      "x": false,
+      "name": "pounding on door",
+      "short": "pounding on door",
+      "id": 22523,
+      "categories": [
+        "household"
+      ]
+    },
+{
+      "x": false,
+      "name": "“Here kitty, kitty.” (male)",
+      "short": "“Here kitty, kitty.”",
+      "id": 25702,
+      "categories": [
+        "voice"
+      ]
+    },
+{
+      "x": false,
+      "name": "car speed, skid, and crash",
+      "short": "car speed, skid, and crash",
+      "id": 22350,
+      "categories": [
+        "vehicle"
+      ]
+    },
+{
+      "x": false,
+      "name": "squeaky bed",
+      "short": "squeaky bed",
+      "id": 22283,
+      "categories": [
+        "household",
+        "sexual"
+      ]
     }]
 }
