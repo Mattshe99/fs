@@ -1,4 +1,4 @@
-const APP_VERSION = "2.1.0-Diddy-Turbo-Fix";
+const APP_VERSION = "2.1.0-Diddler-Turbo-Fix";
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
@@ -275,12 +275,9 @@ function renderPlayback() {
   const total = state.playbackQueue.length;
   const idx = state.playbackIndex ?? 0;
   const entry = state.playbackQueue[idx];
-  const nextPlayer = entry ? entry.player : null;
   const playLabel = state.isPlaying
     ? "Playing…"
-    : nextPlayer
-    ? `Play Next — ${idx + 1}/${total} (${nextPlayer})`
-    : "Play submissions";
+    : `Play Next — ${idx + 1}/${total}`;
 
   // Ensure autoplay checkbox reflects current state (default to non-iOS auto-play)
   const autoplayChecked = state.autoPlay === null ? (!isIOS).toString() : (state.autoPlay ? "true" : "false");
@@ -484,7 +481,7 @@ function selectPrompt(promptId) {
   
   // Read the prompt aloud
   const formattedPrompt = formatPrompt(prompt.name, state.promptTarget);
-  speakText(formattedPrompt);
+  // Prompt will be spoken once when playback starts; avoid repeating here.
   
   state.stage = "submissionLobby";
   render();
@@ -754,6 +751,15 @@ async function playSound(soundId) {
         return;
       }
       
+      // Ensure playback starts from the very beginning at full volume
+      try {
+        audio.currentTime = 0;
+      } catch (err) {
+        // Some browsers may not allow setting currentTime before metadata is loaded
+      }
+      audio.muted = false;
+      audio.volume = 1.0;
+
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise
