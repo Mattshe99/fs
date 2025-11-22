@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const APP_VERSION = "2.2.0-iOS-SingleAudio";
+=======
+const APP_VERSION = "2.1.0-iOS-Fix";
+>>>>>>> parent of cb9c92f (ker)
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
@@ -552,14 +556,20 @@ async function playSubmissionQueue() {
     try {
       // Play first sound
       if (entry.sounds[0]?.id) {
+        console.log(`  Playing sound 1: ${entry.sounds[0].id}`);
         await playSound(entry.sounds[0]?.id).catch((error) => {
           console.warn(`Failed to play first sound for player ${entry.player}:`, error);
         });
+        // Extra delay on iOS between sounds
+        if (isIOS) {
+          await wait(200);
+        }
       }
       await wait(SOUND_GAP_MS);
       
       // Play second sound
       if (entry.sounds[1]?.id) {
+        console.log(`  Playing sound 2: ${entry.sounds[1].id}`);
         await playSound(entry.sounds[1]?.id).catch((error) => {
           console.warn(`Failed to play second sound for player ${entry.player}:`, error);
         });
@@ -568,7 +578,8 @@ async function playSubmissionQueue() {
       // Wait before next player (unless it's the last one)
       // iOS needs longer delays between players
       if (i < state.playbackQueue.length - 1) {
-        const delay = isIOS ? PLAYER_GAP_MS * 2 : PLAYER_GAP_MS;
+        const delay = isIOS ? PLAYER_GAP_MS * 3 : PLAYER_GAP_MS; // Even longer on iOS
+        console.log(`  Waiting ${delay}ms before next player...`);
         await wait(delay);
       }
     } catch (error) {
@@ -688,15 +699,28 @@ async function playSound(soundId) {
       if (resolved || playAttempted) return;
       playAttempted = true;
       
+      // On iOS, ensure audio is fully loaded before playing
+      if (isIOS && audio.readyState < 3) { // HAVE_FUTURE_DATA
+        // Wait a bit more for iOS
+        setTimeout(() => {
+          if (resolved) return;
+          doPlay();
+        }, 100);
+        return;
+      }
+      
+      doPlay();
+    };
+    
+    const doPlay = () => {
       console.log(`playSound: Attempting to play ${source}, readyState: ${audio.readyState}, iOS: ${isIOS}`);
       
-      // Wait for minimum ready state
-      const minReadyState = isIOS ? 2 : 2; // HAVE_CURRENT_DATA
-      if (audio.readyState < minReadyState) {
-        console.log(`playSound: Audio not ready (${audio.readyState}), waiting...`);
+      // On iOS, ensure we wait a bit more if not fully ready
+      if (isIOS && audio.readyState < 4) {
+        console.log(`playSound: iOS audio not fully ready (${audio.readyState}), waiting...`);
         setTimeout(() => {
           if (!resolved) {
-            attemptPlay();
+            doPlay();
           }
         }, 100);
         return;
@@ -706,37 +730,52 @@ async function playSound(soundId) {
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            // Playback started successfully
-            console.log(`playSound: Audio playing: ${source}`);
+            // Playback started successfully, wait for it to end
+            console.log(`playSound: Audio playing successfully: ${source}`);
           })
           .catch((error) => {
-            console.warn(`playSound: Play failed: ${error.message} for ${source}`);
-            // On iOS, try once more after a short delay
+            console.warn(`playSound: Audio play failed: ${error.message} for ${source}, iOS: ${isIOS}`);
+            // On iOS, try multiple times with increasing delays
             if (isIOS && !resolved) {
-              setTimeout(() => {
-                if (!resolved) {
-                  audio.play()
-                    .then(() => {
-                      console.log(`playSound: Retry successful`);
-                    })
-                    .catch(() => {
-                      // Final attempt failed, resolve to not block
-                      console.warn(`playSound: Final attempt failed, resolving`);
-                      setTimeout(cleanup, 300);
-                    });
+              let retryCount = 0;
+              const maxRetries = 3;
+              const retry = () => {
+                if (resolved || retryCount >= maxRetries) {
+                  if (!resolved) {
+                    console.warn(`playSound: Max retries reached, resolving`);
+                    cleanup();
+                  }
+                  return;
                 }
-              }, 300);
+                retryCount++;
+                const delay = 200 * retryCount; // 200ms, 400ms, 600ms
+                console.log(`playSound: Retrying play (attempt ${retryCount}/${maxRetries}) after ${delay}ms`);
+                setTimeout(() => {
+                  if (!resolved) {
+                    audio.play()
+                      .then(() => {
+                        console.log(`playSound: Retry successful on attempt ${retryCount}`);
+                      })
+                      .catch(() => {
+                        retry();
+                      });
+                  }
+                }, delay);
+              };
+              retry();
             } else {
-              // Resolve after delay to not block
+              // If play fails, wait a bit then resolve anyway to not block
               setTimeout(() => {
                 if (!resolved) {
+                  console.warn("playSound: Resolving after play failure to prevent blocking");
                   cleanup();
                 }
               }, 500);
             }
           });
       } else {
-        // No promise, assume playing
+        // No promise returned, assume it's playing or will play
+        console.log("playSound: No promise returned, assuming play will work");
         setTimeout(() => {
           if (!resolved && audio.ended) {
             cleanup();
@@ -777,12 +816,23 @@ async function playSound(soundId) {
     // On iOS, add a small delay after load to ensure it's ready
     // Note: Can't use await in Promise constructor, so we rely on event listeners
     
-    // Fallback timeout in case events don't fire
+    // Fallback timeout in case events don't fire or audio is already ready
+    // iOS needs more time to load
+    const timeoutDelay = isIOS ? 3000 : 2000;
     timeoutId = setTimeout(() => {
       if (resolved) return;
-      console.log(`playSound: Timeout fallback, readyState: ${audio.readyState}`);
-      attemptPlay();
-    }, 2000);
+      
+      // On iOS, wait for HAVE_FUTURE_DATA (3) or HAVE_ENOUGH_DATA (4)
+      const minReadyState = isIOS ? 3 : 2;
+      if (audio.readyState >= minReadyState) {
+        attemptPlay();
+      } else {
+        // Audio didn't load in time
+        console.warn("Audio didn't load in time:", source, "readyState:", audio.readyState, "iOS:", isIOS, "Online:", navigator.onLine);
+        // Try to play anyway - might work
+        attemptPlay();
+      }
+    }, timeoutDelay);
     
     // Maximum timeout - force resolve after 10 seconds to prevent infinite hanging
     maxTimeoutId = setTimeout(() => {
