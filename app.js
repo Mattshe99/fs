@@ -25,6 +25,8 @@ const state = {
   audioById: new Map(),
   submissions: [],
   playbackQueue: [],
+  playbackIndex: 0,
+  autoPlay: null,
   isPlaying: false,
   currentlyRevealedSounds: null,
   lastWinner: null,
@@ -270,16 +272,31 @@ function renderPlayback() {
   const revealed = state.currentlyRevealedSounds
     ? `<p>Now playing: <strong>${state.currentlyRevealedSounds.join(" → ")}</strong></p>`
     : "<p>The judge will hear each combo without knowing who picked it.</p>";
+  const total = state.playbackQueue.length;
+  const idx = state.playbackIndex ?? 0;
+  const entry = state.playbackQueue[idx];
+  const nextPlayer = entry ? entry.player : null;
+  const playLabel = state.isPlaying
+    ? "Playing…"
+    : nextPlayer
+    ? `Play Next — ${idx + 1}/${total} (${nextPlayer})`
+    : "Play submissions";
+
+  // Ensure autoplay checkbox reflects current state (default to non-iOS auto-play)
+  const autoplayChecked = state.autoPlay === null ? (!isIOS).toString() : (state.autoPlay ? "true" : "false");
 
   return `
     ${renderScoreboard()}
     <section class="panel">
       <div class="prompt-card">${formatPrompt(state.currentPrompt.name, state.promptTarget, state.promptTarget ?? "???")}</div>
-      <p>Hand the device to the judge. Audio will play each combo in random order.</p>
+      <p>Hand the device to the judge. Use "Play Next" to play each submission, or enable Auto-play.</p>
       ${revealed}
-      <button id="play-submissions" ${state.isPlaying ? "disabled" : ""}>
-        ${state.isPlaying ? "Playing…" : "Play submissions"}
-      </button>
+      <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;">
+        <label style="display:inline-flex;align-items:center;gap:6px;">
+          <input id="autoplay-toggle" type="checkbox" ${state.autoPlay === null ? (!isIOS ? "checked" : "") : (state.autoPlay ? "checked" : "")} /> Auto-play
+        </label>
+        <button id="play-next" ${state.isPlaying ? "disabled" : ""}>${playLabel}</button>
+      </div>
     </section>
   `;
 }
@@ -361,7 +378,14 @@ function attachHandlersForStage() {
       document.getElementById("lock-picks")?.addEventListener("click", submitSoundSelection);
       break;
     case "playback":
-      document.getElementById("play-submissions")?.addEventListener("click", playSubmissionQueue);
+      document.getElementById("play-next")?.addEventListener("click", playSubmissionQueue);
+      document.getElementById("autoplay-toggle")?.addEventListener("change", (e) => {
+        try {
+          state.autoPlay = !!e.target.checked;
+        } catch (err) {
+          state.autoPlay = !!document.getElementById("autoplay-toggle")?.checked;
+        }
+      });
       break;
     case "judging":
       document.querySelectorAll("[data-choice]").forEach((button) =>
@@ -523,14 +547,21 @@ function submitSoundSelection() {
 
 function preparePlayback() {
   state.playbackQueue = shuffle([...state.submissions]);
+  state.playbackIndex = 0;
   state.stage = "playback";
 }
 
 async function playSubmissionQueue() {
   if (state.isPlaying) return;
-  state.isPlaying = true;
-  render();
-  
+
+  // Initialize playback state (don't reset if already progressed)
+  if (typeof state.playbackIndex !== "number" || state.playbackIndex < 0 || state.playbackIndex >= state.playbackQueue.length) {
+    state.playbackIndex = 0;
+  }
+  if (state.autoPlay === null) {
+    state.autoPlay = !isIOS; // default to auto-play on non-iOS
+  }
+
   // Read the prompt aloud before playing submissions
   if (state.currentPrompt) {
     const formattedPrompt = formatPrompt(state.currentPrompt.name, state.promptTarget);
@@ -538,53 +569,72 @@ async function playSubmissionQueue() {
     // Small pause after speech before starting audio
     await wait(500);
   }
-  
-  for (let i = 0; i < state.playbackQueue.length; i++) {
-    const entry = state.playbackQueue[i];
-    state.currentlyRevealedSounds = entry.sounds.map((sound) => sound.name);
-    render();
-    
-    console.log(`Playing submission ${i + 1}/${state.playbackQueue.length} for player: ${entry.player}`);
-    
-    try {
-      // Play first sound
-      if (entry.sounds[0]?.id) {
-        console.log(`  Playing sound 1: ${entry.sounds[0].id}`);
-        await playSound(entry.sounds[0]?.id).catch((error) => {
-          console.warn(`Failed to play first sound for player ${entry.player}:`, error);
-        });
-        // Extra delay on iOS between sounds
-        if (isIOS) {
-          await wait(200);
-        }
-      }
-      await wait(SOUND_GAP_MS);
-      
-      // Play second sound
-      if (entry.sounds[1]?.id) {
-        console.log(`  Playing sound 2: ${entry.sounds[1].id}`);
-        await playSound(entry.sounds[1]?.id).catch((error) => {
-          console.warn(`Failed to play second sound for player ${entry.player}:`, error);
-        });
-      }
-      
-      // Wait before next player (unless it's the last one)
-      // iOS needs longer delays between players
-      if (i < state.playbackQueue.length - 1) {
-        const delay = isIOS ? PLAYER_GAP_MS * 3 : PLAYER_GAP_MS; // Even longer on iOS
-        console.log(`  Waiting ${delay}ms before next player...`);
-        await wait(delay);
-      }
-    } catch (error) {
-      console.error(`Error playing submission for ${entry.player}:`, error);
-      // Continue to next player even if this one failed
-      await wait(PLAYER_GAP_MS);
-    }
-  }
-  state.isPlaying = false;
-  state.currentlyRevealedSounds = null;
-  state.stage = "judging";
+
+  // Play the first submission (and subsequent ones if autoPlay is enabled)
+  await playCurrentSubmission();
+}
+
+async function playCurrentSubmission() {
+  if (state.isPlaying) return;
+  const idx = state.playbackIndex ?? 0;
+  const entry = state.playbackQueue[idx];
+  if (!entry) return;
+
+  state.isPlaying = true;
+  state.currentlyRevealedSounds = entry.sounds.map((s) => s.name);
   render();
+
+  console.log(`Playing submission ${idx + 1}/${state.playbackQueue.length} for player: ${entry.player}`);
+
+  try {
+    if (entry.sounds[0]?.id) {
+      console.log(`  Playing sound 1: ${entry.sounds[0].id}`);
+      await playSound(entry.sounds[0]?.id).catch((error) => {
+        console.warn(`Failed to play first sound for player ${entry.player}:`, error);
+      });
+      if (isIOS) {
+        await wait(200);
+      }
+    }
+
+    await wait(SOUND_GAP_MS);
+
+    if (entry.sounds[1]?.id) {
+      console.log(`  Playing sound 2: ${entry.sounds[1].id}`);
+      await playSound(entry.sounds[1]?.id).catch((error) => {
+        console.warn(`Failed to play second sound for player ${entry.player}:`, error);
+      });
+    }
+
+    // Completed current submission
+    const lastIndex = state.playbackQueue.length - 1;
+    if (idx >= lastIndex) {
+      // Finished all submissions
+      state.isPlaying = false;
+      state.currentlyRevealedSounds = null;
+      state.stage = "judging";
+      state.playbackIndex = 0;
+      render();
+      return;
+    }
+
+    // Advance index for next submission
+    state.playbackIndex = idx + 1;
+    state.isPlaying = false;
+    render();
+
+    if (state.autoPlay) {
+      const delay = isIOS ? PLAYER_GAP_MS * 3 : PLAYER_GAP_MS;
+      await wait(delay);
+      await playCurrentSubmission();
+    }
+  } catch (error) {
+    console.error(`Error playing submission for ${entry.player}:`, error);
+    state.isPlaying = false;
+    // Allow manual advance after short pause
+    await wait(PLAYER_GAP_MS);
+    render();
+  }
 }
 
 // Detect iOS
