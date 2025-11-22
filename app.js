@@ -52,9 +52,25 @@ async function init() {
       fetch("data/prompts.json"),
     ]);
 
-    state.audioLibrary = await audioRes.json();
+    // Parse and accept either an array or an object with a `content` array
+    const audioJson = await audioRes.json();
+    if (Array.isArray(audioJson)) {
+      state.audioLibrary = audioJson;
+    } else if (audioJson && Array.isArray(audioJson.content)) {
+      state.audioLibrary = audioJson.content;
+    } else {
+      throw new Error('Invalid format for data/audio.json');
+    }
     state.audioById = new Map(state.audioLibrary.map((item) => [item.id, item]));
-    state.promptLibrary = await promptRes.json();
+
+    const promptsJson = await promptRes.json();
+    if (Array.isArray(promptsJson)) {
+      state.promptLibrary = promptsJson;
+    } else if (promptsJson && Array.isArray(promptsJson.content)) {
+      state.promptLibrary = promptsJson.content;
+    } else {
+      throw new Error('Invalid format for data/prompts.json');
+    }
     rebuildPromptBag();
     
     // Preload all audio files
