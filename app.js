@@ -316,16 +316,12 @@ function renderJudging() {
     .map((entry, index) => {
       const names = entry.sounds.map((sound) => sound.name).join(" + ");
       return `
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button class="outline-button" data-play="${index}" ${state.isPlaying ? "disabled" : ""}>
-            ${names}
-          </button>
-          <button class="outline-button" data-replay="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Replay">
-            ▶
-          </button>
-          <button class="outline-button" data-select="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Select">
-            ✓
-          </button>
+        <div class="combo-row" style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:8px;">
+          <div class="combo-text">${names}</div>
+          <div style="display:flex;gap:8px;">
+            <button class="outline-button" data-play="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Play">▶</button>
+            <button class="outline-button" data-select="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Select">✓</button>
+          </div>
         </div>
       `;
     })
@@ -403,10 +399,6 @@ function attachHandlersForStage() {
       // Play combo (no award)
       document.querySelectorAll("[data-play]").forEach((button) =>
         button.addEventListener("click", () => replayCombo(Number(button.dataset.play))),
-      );
-      // Extra small replay button (also plays)
-      document.querySelectorAll("[data-replay]").forEach((button) =>
-        button.addEventListener("click", () => replayCombo(Number(button.dataset.replay))),
       );
       // Select/award this combo
       document.querySelectorAll("[data-select]").forEach((button) =>
@@ -665,6 +657,9 @@ async function playSound(soundId) {
   // iOS Safari works better with blob URLs, especially for cached content
   // Always use blob URLs on iOS for consistency
   let audioUrl = fullUrl;
+  // Track if we created a blob URL that needs to be revoked
+  let blobUrl = null;
+  let needsBlobCleanup = false;
   
   if ('caches' in window) {
     try {
@@ -675,6 +670,7 @@ async function playSound(soundId) {
         // Convert cached response to blob URL for iOS compatibility
         const blob = await cachedResponse.blob();
         audioUrl = URL.createObjectURL(blob);
+        blobUrl = audioUrl;
         needsBlobCleanup = true;
       } else if (isIOS && navigator.onLine) {
         // On iOS, even when online, fetch and convert to blob for consistency
@@ -683,6 +679,7 @@ async function playSound(soundId) {
           if (response.ok) {
             const blob = await response.blob();
             audioUrl = URL.createObjectURL(blob);
+            blobUrl = audioUrl;
             needsBlobCleanup = true;
           }
         } catch (error) {
@@ -695,11 +692,9 @@ async function playSound(soundId) {
   }
   
   return new Promise((resolve) => {
-    let resolved = false;
-    let blobUrl = null;
-    let needsBlobCleanup = false;
-    let timeoutId = null;
-    let maxTimeoutId = null;
+  let resolved = false;
+  let timeoutId = null;
+  let maxTimeoutId = null;
     
     const audio = new Audio();
     audio.preload = "auto";
