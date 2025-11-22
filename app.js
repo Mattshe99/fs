@@ -317,11 +317,14 @@ function renderJudging() {
       const names = entry.sounds.map((sound) => sound.name).join(" + ");
       return `
         <div style="display:flex;gap:8px;align-items:center;">
-          <button class="outline-button" data-choice="${index}" ${state.isPlaying ? "disabled" : ""}>
+          <button class="outline-button" data-play="${index}" ${state.isPlaying ? "disabled" : ""}>
             ${names}
           </button>
           <button class="outline-button" data-replay="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Replay">
             ▶
+          </button>
+          <button class="outline-button" data-select="${index}" ${state.isPlaying ? "disabled" : ""} aria-label="Select">
+            ✓
           </button>
         </div>
       `;
@@ -397,11 +400,17 @@ function attachHandlersForStage() {
       document.getElementById("play-next")?.addEventListener("click", playSubmissionQueue);
       break;
     case "judging":
-      document.querySelectorAll("[data-choice]").forEach((button) =>
-        button.addEventListener("click", () => awardCombo(Number(button.dataset.choice))),
+      // Play combo (no award)
+      document.querySelectorAll("[data-play]").forEach((button) =>
+        button.addEventListener("click", () => replayCombo(Number(button.dataset.play))),
       );
+      // Extra small replay button (also plays)
       document.querySelectorAll("[data-replay]").forEach((button) =>
         button.addEventListener("click", () => replayCombo(Number(button.dataset.replay))),
+      );
+      // Select/award this combo
+      document.querySelectorAll("[data-select]").forEach((button) =>
+        button.addEventListener("click", () => awardCombo(Number(button.dataset.select))),
       );
       break;
     case "winner":
