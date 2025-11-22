@@ -1,4 +1,4 @@
-const APP_VERSION = "3.1.0-Diddler-Gobbler-Turbo-Fix";
+const APP_VERSION = "3.1.0-Diddler-Gobbler-Sigma-Turbo-Fix";
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
