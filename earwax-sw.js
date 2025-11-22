@@ -1,5 +1,5 @@
-const STATIC_CACHE = "earwax-static-v2";
-const RUNTIME_CACHE = "earwax-runtime-v2";
+const STATIC_CACHE = "earwax-static-v3";
+const RUNTIME_CACHE = "earwax-runtime-v3";
 
 // Get the base path from the service worker's location
 const BASE_PATH = self.location.pathname.replace(/\/[^/]*$/, '/');
