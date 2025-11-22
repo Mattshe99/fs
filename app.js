@@ -1,4 +1,4 @@
-const APP_VERSION = "2.1.1-Simplified";
+const APP_VERSION = "2.2.0-iOS-SingleAudio";
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
@@ -6,6 +6,9 @@ const SOUNDS_PER_TURN = 6;
 const POINTS_TO_WIN = 3;
 const SOUND_GAP_MS = 100;
 const PLAYER_GAP_MS = 1500;
+
+// Single audio element for iOS compatibility (reuse instead of creating new ones)
+let globalAudioElement = null;
 
 const state = {
   stage: "loading",
@@ -589,8 +592,7 @@ async function playSound(soundId) {
   const source = getAudioSrc(soundId);
   const fullUrl = new URL(source, window.location.href).href;
   
-  // iOS Safari works better with blob URLs, especially for cached content
-  // Always use blob URLs on iOS for consistency
+  // Get audio URL (blob for iOS/cached, direct for others)
   let audioUrl = fullUrl;
   
   if ('caches' in window) {
@@ -599,36 +601,40 @@ async function playSound(soundId) {
       const cachedResponse = await cache.match(fullUrl);
       
       if (cachedResponse) {
-        // Convert cached response to blob URL for iOS compatibility
         const blob = await cachedResponse.blob();
         audioUrl = URL.createObjectURL(blob);
-        needsBlobCleanup = true;
       } else if (isIOS && navigator.onLine) {
-        // On iOS, even when online, fetch and convert to blob for consistency
         try {
           const response = await fetch(fullUrl);
           if (response.ok) {
             const blob = await response.blob();
             audioUrl = URL.createObjectURL(blob);
-            needsBlobCleanup = true;
           }
         } catch (error) {
           console.warn("Failed to fetch for blob conversion:", error);
         }
       }
     } catch (error) {
-      console.warn("Failed to get cached audio, using direct URL:", error);
+      console.warn("Failed to get cached audio:", error);
     }
   }
   
   return new Promise((resolve) => {
     let resolved = false;
-    let blobUrl = null;
     let timeoutId = null;
     let maxTimeoutId = null;
+    let blobUrl = null;
+    const needsBlobCleanup = audioUrl.startsWith('blob:');
+    if (needsBlobCleanup) {
+      blobUrl = audioUrl;
+    }
     
-    const audio = new Audio();
-    audio.preload = "auto";
+    // Use single global audio element for iOS compatibility
+    const audio = getGlobalAudio();
+    
+    // Stop any current playback and reset
+    audio.pause();
+    audio.currentTime = 0;
     
     const cleanup = () => {
       if (resolved) return;
@@ -641,14 +647,8 @@ async function playSound(soundId) {
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("error", onError);
       audio.removeEventListener("canplaythrough", onCanPlay);
-      audio.removeEventListener("loadeddata", onCanPlay);
-      audio.removeEventListener("canplay", onCanPlay);
-      // Clean up audio element
-      audio.pause();
-      audio.src = "";
-      audio.load();
       // Clean up blob URL if we created one
-      if (needsBlobCleanup && blobUrl && blobUrl.startsWith('blob:')) {
+      if (needsBlobCleanup && blobUrl) {
         URL.revokeObjectURL(blobUrl);
       }
       resolve();
