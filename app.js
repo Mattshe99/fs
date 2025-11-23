@@ -1,4 +1,4 @@
-const APP_VERSION = "3.1.0-Diddler2y-Gobbler-Sigma-Turbo-Fix";
+const APP_VERSION = "3.1.0-Diddler3y-Gobbler-Sigma-Turbo-Fix";
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 8;
 const PROMPTS_PER_ROUND = 5;
@@ -34,18 +34,16 @@ const state = {
   errorMessage: "",
   loadingProgress: 0,
   totalAudioFiles: 0,
-  reshuffleUsed: false,
+  // Track which players have used their reshuffle this round (one per player)
+  reshuffleUsed: new Set(),
+  promptSpoken: false,
 };
 
 const appRoot = document.getElementById("app");
-const connectionPill = document.getElementById("connection-pill");
 
 init();
 
 async function init() {
-  handleConnectionChange();
-  window.addEventListener("online", handleConnectionChange);
-  window.addEventListener("offline", handleConnectionChange);
 
   try {
     const [audioRes, promptRes] = await Promise.all([
@@ -114,10 +112,7 @@ async function replayCombo(index) {
 }
 
 function handleConnectionChange() {
-  if (!connectionPill) return;
-  const online = navigator.onLine;
-  connectionPill.textContent = online ? "online" : "offline";
-  connectionPill.className = `connection-pill ${online ? "online" : "offline"}`;
+  // connection UI removed — no-op
 }
 
 function render() {
@@ -193,12 +188,12 @@ function renderError() {
 function renderLobby() {
   const chips =
     state.players.length === 0
-      ? `<p class="help-text">Add between ${MIN_PLAYERS} and ${MAX_PLAYERS} players.</p>`
+      ? ``
       : state.players
           .map(
             (player) => `
         <span class="player-chip">
-          ${player}
+          ${String(player).toUpperCase()}
           <button type="button" data-remove="${player}" aria-label="Remove ${player}">×</button>
         </span>
       `,
@@ -216,7 +211,7 @@ function renderLobby() {
         <button type="submit">Add</button>
       </form>
       <div class="chips">${chips}</div>
-      <div class="help-text">${state.players.length}/${MAX_PLAYERS} players added.</div>
+      
       <button id="start-game" ${canStart ? "" : "disabled"}>Start</button>
     </section>
   `;
@@ -225,26 +220,27 @@ function renderLobby() {
 function renderPromptSelection() {
   const judgeName = getJudgeName();
   const promptButtons = state.promptOptions
-    .map(
-      (prompt) => {
-        // Assign a target player to each prompt if it has <ANY> and doesn't have one yet
-        if (prompt.name.includes("<ANY>") && !prompt.targetPlayer) {
-          prompt.targetPlayer = pickPromptTarget();
-        }
-        const displayName = formatPrompt(prompt.name, prompt.targetPlayer);
-        return `
-      <button class="outline-button" data-prompt="${prompt.id}">
+    .map((prompt) => {
+      // Assign a target player to each prompt if it has <ANY> and doesn't have one yet
+      if (prompt.name.includes("<ANY>") && !prompt.targetPlayer) {
+        prompt.targetPlayer = pickPromptTarget();
+      }
+      const displayName = formatPrompt(prompt.name, prompt.targetPlayer?.toUpperCase());
+      // Mark as selected if it matches currentPrompt
+      const isSelected = Boolean(state.currentPrompt && String(state.currentPrompt.id) === String(prompt.id));
+      const classes = ["outline-button", isSelected ? "selected" : ""].join(" ").trim();
+      const ariaPressed = isSelected ? 'aria-pressed="true"' : 'aria-pressed="false"';
+      return `
+      <button class="${classes}" data-prompt="${prompt.id}" ${ariaPressed}>
         ${displayName}
       </button>
     `;
-      },
-    )
-    .join("");
+    }).join("");
 
   return `
     ${renderScoreboard()}
     <section class="panel">
-      <div class="judge-pill">Judge: ${judgeName}</div>
+      <div class="judge-pill">Judge: ${judgeName?.toUpperCase()}</div>
       <h2>Pick a prompt</h2>
       <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center;">
         <input id="custom-prompt-input" type="text" maxlength="200" placeholder="Or enter your own prompt here" style="flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;" />
@@ -260,7 +256,7 @@ function renderSubmissionLobby() {
     .map(
       (player) => `
         <button class="outline-button" data-player="${player}">
-          ${player}
+          ${String(player).toUpperCase()}
         </button>
       `,
     )
@@ -269,7 +265,7 @@ function renderSubmissionLobby() {
   return `
     ${renderScoreboard()}
     <section class="panel">
-      <div class="prompt-card">${formatPrompt(state.currentPrompt.name, state.promptTarget)}</div>
+      <div class="prompt-card selected">${formatPrompt(state.currentPrompt.name, state.promptTarget?.toUpperCase())}</div>
       <p>Select whose turn it is to pick sounds.</p>
       <div class="grid">
         ${waitingButtons || "<p>Waiting for submissions…</p>"}
@@ -279,7 +275,10 @@ function renderSubmissionLobby() {
 }
 
 function renderSoundPicker() {
-  const selectionNames = state.activeSelection.map((id) => state.audioById.get(id)?.name ?? id);
+  const selectionNames = state.activeSelection.map((id) => {
+    const name = state.audioById.get(id)?.name ?? id;
+    return String(name).toUpperCase();
+  });
   const canSubmit = state.activeSelection.length === 2;
 
   const soundButtons = state.soundOptions
@@ -290,7 +289,7 @@ function renderSoundPicker() {
       const ariaPressed = isSelected ? 'aria-pressed="true"' : 'aria-pressed="false"';
       return `
         <button class="${classes}" data-sound="${sound.id}" ${ariaPressed}>
-          ${sound.name}
+          ${String(sound.name).toUpperCase()}
         </button>
       `;
     })
@@ -299,8 +298,8 @@ function renderSoundPicker() {
   return `
     ${renderScoreboard()}
     <section class="panel">
-      <div class="judge-pill">${state.activePlayer}'s turn</div>
-      <div class="prompt-card">${formatPrompt(state.currentPrompt.name, state.promptTarget ?? state.activePlayer)}</div>
+      <div class="judge-pill">${state.activePlayer ? String(state.activePlayer).toUpperCase() + "'S TURN" : ""}</div>
+      <div class="prompt-card">${formatPrompt(state.currentPrompt.name, (state.promptTarget ?? state.activePlayer)?.toUpperCase())}</div>
       <p>Choose two sounds in the order you want them to play.</p>
       <div class="grid">${soundButtons}</div>
       <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
@@ -309,7 +308,7 @@ function renderSoundPicker() {
       </div>
       <div class="help-text">Selected: ${selectionNames.join(" → ") || "None"}</div>
       <div class="stack">
-        <button id="reshuffle-sounds" class="outline-button" ${state.reshuffleUsed ? "disabled" : ""}>New sounds</button>
+        <button id="reshuffle-sounds" class="outline-button" ${state.activePlayer && state.reshuffleUsed && state.reshuffleUsed.has(state.activePlayer) ? "disabled" : ""}>New sounds</button>
         <button id="clear-selection" class="outline-button">Clear picks</button>
         <button id="lock-picks" ${canSubmit ? "" : "disabled"}>Lock in</button>
       </div>
@@ -324,12 +323,17 @@ function renderPlayback() {
   const total = state.playbackQueue.length;
   const idx = state.playbackIndex ?? 0;
   const entry = state.playbackQueue[idx];
+  const playLabel = state.isPlaying ? "Playing…" : `Play Next — ${idx + 1}/${total}`;
+
   return `
     ${renderScoreboard()}
     <section class="panel">
-      <div class="prompt-card">${formatPrompt(state.currentPrompt.name, state.promptTarget, state.promptTarget ?? "???")}</div>
-      <p>Hand the device to the judge. Submissions will play automatically.</p>
+      <div class="prompt-card">${formatPrompt(state.currentPrompt.name, state.promptTarget?.toUpperCase(), state.promptTarget ?? "???")}</div>
+      <p>Hand the device to the judge. Use "Play Next" to play each submission.</p>
       ${revealed}
+      <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;">
+        <button id="play-next" ${state.isPlaying ? "disabled" : ""}>${playLabel}</button>
+      </div>
     </section>
   `;
 }
@@ -337,7 +341,7 @@ function renderPlayback() {
 function renderJudging() {
   const comboButtons = state.playbackQueue
     .map((entry, index) => {
-      const names = entry.sounds.map((sound) => sound.name).join(" + ");
+      const names = entry.sounds.map((sound) => String(sound.name).toUpperCase()).join(" + ");
       return `
         <div class="combo-row" style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:8px;">
           <div class="combo-text">${names}</div>
@@ -366,7 +370,7 @@ function renderWinner() {
   return `
     ${renderScoreboard()}
     <section class="panel">
-      <h2>${state.winner} wins!</h2>
+      <h2>${state.winner ? String(state.winner).toUpperCase() : ''} wins!</h2>
       <p>First to ${POINTS_TO_WIN} points.</p>
       <button id="play-again">Play another game</button>
     </section>
@@ -378,7 +382,7 @@ function renderScoreboard() {
     return "";
   }
   const pills = state.players
-    .map((player) => `<span class="score-pill">${player}: ${state.scores[player] ?? 0}</span>`)
+    .map((player) => `<span class="score-pill">${String(player).toUpperCase()}: ${state.scores[player] ?? 0}</span>`)
     .join("");
   return `<section class="scoreboard">${pills}</section>`;
 }
@@ -450,7 +454,19 @@ function attachHandlersForStage() {
       }
       break;
     case "playback":
-      // Playback auto-starts; no play-next button to wire
+      document.getElementById("play-next")?.addEventListener("click", async () => {
+        // On first Play Next we should speak the prompt (if not spoken already)
+        if (!state.promptSpoken && state.currentPrompt) {
+          const formattedPrompt = formatPrompt(state.currentPrompt.name, state.promptTarget);
+          try {
+            await speakText(formattedPrompt).catch(() => {});
+          } catch (e) {
+            console.warn('Failed to speak prompt on Play Next', e);
+          }
+          state.promptSpoken = true;
+        }
+        await playCurrentSubmission();
+      });
       break;
       break;
     case "judging":
@@ -526,7 +542,7 @@ function startRound(advanceJudge = true) {
   state.isPlaying = false;
   state.currentlyRevealedSounds = null;
   // Reset reshuffle usage each round so players get one reshuffle per round
-  state.reshuffleUsed = false;
+  state.reshuffleUsed = new Set();
   state.stage = "promptSelection";
   render();
 }
@@ -545,7 +561,7 @@ function drawPromptOptions() {
 }
 
 // Called when judge submits a custom prompt via the prompt selection screen
-function submitCustomPrompt(text) {
+async function submitCustomPrompt(text) {
   const trimmed = String(text || "").trim();
   if (!trimmed) return;
   const id = `custom-${Date.now()}`;
@@ -555,21 +571,33 @@ function submitCustomPrompt(text) {
   state.currentPrompt = promptObj;
   // If prompt contains <ANY> pick a target player, otherwise leave null
   state.promptTarget = trimmed.includes("<ANY>") ? pickPromptTarget() : null;
+
+  // Speak the prompt immediately for the judge
+  try {
+    await speakText(trimmed);
+  } catch (e) {
+    console.warn('Failed to speak custom prompt', e);
+  }
+
   state.stage = "submissionLobby";
   render();
 }
 
-function selectPrompt(promptId) {
+async function selectPrompt(promptId) {
   const prompt = state.promptOptions.find((item) => item.id === promptId);
   if (!prompt) return;
   state.currentPrompt = prompt;
   // Use the target player that was assigned when displaying the prompt, or pick a new one
   state.promptTarget = prompt.targetPlayer || pickPromptTarget();
-  
-  // Read the prompt aloud
+
+  // Read the prompt aloud immediately for the judge
   const formattedPrompt = formatPrompt(prompt.name, state.promptTarget);
-  // Prompt will be spoken once when playback starts; avoid repeating here.
-  
+  try {
+    await speakText(formattedPrompt);
+  } catch (e) {
+    console.warn('Failed to speak selected prompt', e);
+  }
+
   state.stage = "submissionLobby";
   render();
 }
@@ -618,13 +646,15 @@ function toggleSound(soundId) {
 }
 
 function reshuffleSounds() {
-  if (state.reshuffleUsed) {
+  const player = state.activePlayer;
+  if (!player) return;
+  if (state.reshuffleUsed && state.reshuffleUsed.has(player)) {
     alert("You can only reshuffle once per round.");
     return;
   }
   state.soundOptions = drawRandomSounds();
   state.activeSelection = [];
-  state.reshuffleUsed = true;
+  state.reshuffleUsed.add(player);
   render();
 }
 
@@ -658,12 +688,11 @@ function submitSoundSelection() {
 function preparePlayback() {
   state.playbackQueue = shuffle([...state.submissions]);
   state.playbackIndex = 0;
-  // Enable autoplay when entering playback so submissions play automatically
-  state.autoPlay = true;
+  // Prepare playback but do not auto-start; judge will press Play Next
+  state.autoPlay = false;
+  state.promptSpoken = false;
   state.stage = "playback";
   render();
-  // Start playback asynchronously
-  playSubmissionQueue().catch((e) => console.warn('playSubmissionQueue error', e));
 }
 
 async function playSubmissionQueue() {
@@ -692,7 +721,7 @@ async function playSubmissionQueue() {
 
     state.playbackIndex = idx;
     state.isPlaying = true;
-    state.currentlyRevealedSounds = entry.sounds.map((s) => s.name);
+    state.currentlyRevealedSounds = entry.sounds.map((s) => String(s.name).toUpperCase());
     render();
 
     try {
@@ -738,7 +767,7 @@ async function playCurrentSubmission() {
   if (!entry) return;
 
   state.isPlaying = true;
-  state.currentlyRevealedSounds = entry.sounds.map((s) => s.name);
+  state.currentlyRevealedSounds = entry.sounds.map((s) => String(s.name).toUpperCase());
   render();
 
   console.log(`Playing submission ${idx + 1}/${state.playbackQueue.length} for player: ${entry.player}`);
