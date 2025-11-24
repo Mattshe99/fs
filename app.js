@@ -37,6 +37,8 @@ const state = {
   // Track which players have used their reshuffle this round (one per player)
   reshuffleUsed: new Set(),
   promptSpoken: false,
+  // Track how many times each player has been judge
+  judgeCounts: {},
 };
 
 const appRoot = document.getElementById("app");
@@ -518,17 +520,25 @@ function wireLobbyHandlers() {
 
 function startGame() {
   if (state.players.length < MIN_PLAYERS) return;
-  state.judgeIndex = Math.floor(Math.random() * state.players.length);
+  // Reset judge counts for a new game and ensure scores exist
+  state.judgeCounts = {};
   state.players.forEach((name) => {
     state.scores[name] = state.scores[name] ?? 0;
+    state.judgeCounts[name] = 0;
   });
   startRound(false);
 }
 
 function startRound(advanceJudge = true) {
   if (state.players.length < MIN_PLAYERS) return;
-  if (advanceJudge && state.judgeIndex !== null) {
-    state.judgeIndex = (state.judgeIndex + 1) % state.players.length;
+  // Choose the judge fairly: pick randomly among players with the fewest judge turns
+  if (state.judgeIndex === null || advanceJudge) {
+    const nextIndex = pickNextJudgeIndex();
+    if (typeof nextIndex === 'number') {
+      state.judgeIndex = nextIndex;
+      const judgeName = state.players[state.judgeIndex];
+      state.judgeCounts[judgeName] = (state.judgeCounts[judgeName] ?? 0) + 1;
+    }
   }
   state.currentPrompt = null;
   state.promptTarget = null;
@@ -1121,6 +1131,8 @@ function resetGame() {
   state.players.forEach((player) => {
     state.scores[player] = 0;
   });
+  // Reset judge counts when the game is reset
+  state.judgeCounts = {};
   render();
 }
 
@@ -1245,6 +1257,20 @@ function pickPromptTarget() {
   }
   const randomIndex = Math.floor(Math.random() * eligiblePlayers.length);
   return eligiblePlayers[randomIndex];
+}
+
+// Pick the index of the next judge by choosing randomly among players
+// who have the fewest judge turns so far.
+function pickNextJudgeIndex() {
+  if (!state.players || state.players.length === 0) return null;
+  const counts = state.players.map((p) => state.judgeCounts[p] ?? 0);
+  const min = Math.min(...counts);
+  const candidates = counts
+    .map((c, i) => (c === min ? i : -1))
+    .filter((i) => i !== -1);
+  if (!candidates.length) return 0;
+  const choice = candidates[Math.floor(Math.random() * candidates.length)];
+  return choice;
 }
 
 function wait(duration) {
