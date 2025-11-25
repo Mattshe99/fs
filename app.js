@@ -207,14 +207,13 @@ function renderLobby() {
   return `
     <section class="panel">
       <h2>Players</h2>
-      <div style="font-size: 10px; color: #6b7280; text-align: center; margin-bottom: 10px;">v${APP_VERSION}</div>
       <form id="player-form" class="input-row" autocomplete="off">
-        <input type="text" name="playerName" placeholder="Enter player name" maxlength="18" required />
+        <input type="text" name="playerName" placeholder="Enter player name" maxlength="18" required style="background:#ffffff;color:#000000;border:1px solid #000;padding:8px;border-radius:6px;" />
         <button type="submit">Add</button>
       </form>
-      <div class="chips">${chips}</div>
-      
-      <button id="start-game" ${canStart ? "" : "disabled"}>Start</button>
+      <div class="chips" style="margin-bottom:18px;">${chips}</div>
+
+      <button id="start-game" style="margin-top:8px;" ${canStart ? "" : "disabled"}>Start</button>
     </section>
   `;
 }
